@@ -1,4 +1,4 @@
-package kdtree;
+package com.shutart.rpkdtree.kdtree;
 
 public interface Vector {
 	boolean equals(Vector vector);

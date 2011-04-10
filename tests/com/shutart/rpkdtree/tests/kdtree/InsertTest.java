@@ -1,8 +1,14 @@
-package kdtree;
+package com.shutart.rpkdtree.tests.kdtree;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import com.shutart.rpkdtree.kdtree.IKDTree;
+import com.shutart.rpkdtree.kdtree.INode;
+import com.shutart.rpkdtree.kdtree.KDTree;
+import com.shutart.rpkdtree.kdtree.Vector;
+import com.shutart.rpkdtree.kdtree.VectorI;
 
 public class InsertTest {
 	@Test

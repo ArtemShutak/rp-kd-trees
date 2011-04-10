@@ -1,4 +1,4 @@
-package kdtree;
+package com.shutart.rpkdtree.kdtree;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package kdtree;
+package com.shutart.rpkdtree.kdtree;
 
 public interface INode {
 	double getKey(int index);
