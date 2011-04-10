@@ -15,6 +15,6 @@ public interface IKDTree {
 	 * @param queryVector
 	 * @return 
 	 */
-	List<Vector> nnserch(int numberOfNeighbors,Vector queryVector);
+	List<Vector> nnsearch(int numberOfNeighbors, Vector queryVector);
 
 }

@@ -15,7 +15,7 @@ public class Node implements INode {
 	}
 
 	@Override
-	public boolean isLoSonSuccessorOf(INode parent) {
+	public boolean isLoSuccessorOf(INode parent) {
 		assert !this.getVector().equals(parent.getVector());
 		int parentDisc = parent.getDiscriminator();
 		if (this.getKey(parentDisc) < parent.getKey(parentDisc)) {

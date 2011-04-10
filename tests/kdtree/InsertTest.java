@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-public class Insert {
+public class InsertTest {
 	@Test
 	public void testRoot() {
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
