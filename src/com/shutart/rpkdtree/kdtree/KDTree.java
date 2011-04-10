@@ -1,4 +1,4 @@
-package kdtree;
+package com.shutart.rpkdtree.kdtree;
 
 import java.util.ArrayList;
 import java.util.Comparator;
