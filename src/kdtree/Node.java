@@ -15,7 +15,7 @@ public class Node implements INode {
 	}
 
 	@Override
-	public boolean isLoSonSuccessorOf(INode parent) {
+	public boolean isLoSuccessorOf(INode parent) {
 		assert !this.getVector().equals(parent.getVector());
 		int parentDisc = parent.getDiscriminator();
 		if (this.getKey(parentDisc) < parent.getKey(parentDisc)) {
@@ -43,14 +43,14 @@ public class Node implements INode {
 		myMaxBounds = new double[getDimension()];
 		if (father == null) {
 			myDiscriminator = 0;
-			setBoundsAsIfinities();
+			setBoundsAsInfinities();
 		} else {
 			myDiscriminator = (father.getDiscriminator() + 1) % getDimension();
 			setBounds(father, itIsLoSon);
 		}
 	}
 
-	private void setBoundsAsIfinities() {
+	private void setBoundsAsInfinities() {
 		for (int i = 0; i < getDimension(); i++) {
 			myMinBounds[i] = Double.NEGATIVE_INFINITY;
 			myMaxBounds[i] = Double.POSITIVE_INFINITY;

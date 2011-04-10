@@ -2,7 +2,7 @@ package kdtree;
 
 public interface INode {
 	double getKey(int index);
-	boolean isLoSonSuccessorOf(INode parent);
+	boolean isLoSuccessorOf(INode parent);
 	void initBoundsAndDiscrim(INode father, boolean itIsLoSon);
 	//Getter methods	
 	/**
