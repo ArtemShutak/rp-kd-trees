@@ -28,7 +28,7 @@ public class KDTree implements IKDTree {
 			if(curNode.getVector().equals(vector)){
 				return curNode;
 			}
-			boolean itIsLoSon = insertableNode.isLoSonSuccessorOf(curNode);
+			boolean itIsLoSon = insertableNode.isLoSuccessorOf(curNode);
 			INode successor = curNode.getSon(itIsLoSon);
 			if(successor == null){
 				isModifiedInLastTime = true;
@@ -47,6 +47,14 @@ public class KDTree implements IKDTree {
 		INode queryNode = new Node(queryVector);
 		NNSearcherRecursive nnSearcher = new NNSearcherRecursive(numberOfNeighbors,queryNode);
 		return nnSearcher.search();
+	}
+	/**
+	 * This class for "nnsearch" method. This class do nn-search.
+	 * @author Артем
+	 *
+	 */
+	private final class NNSearcher{
+		
 	}
 	/**
 	 * This class for "nnsearch" method. This class do nn-search.
