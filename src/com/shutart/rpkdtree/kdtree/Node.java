@@ -43,14 +43,14 @@ public class Node implements INode {
 		myMaxBounds = new double[getDimension()];
 		if (father == null) {
 			myDiscriminator = 0;
-			setBoundsAsIfinities();
+			setBoundsAsInfinities();
 		} else {
 			myDiscriminator = (father.getDiscriminator() + 1) % getDimension();
 			setBounds(father, itIsLoSon);
 		}
 	}
 
-	private void setBoundsAsIfinities() {
+	private void setBoundsAsInfinities() {
 		for (int i = 0; i < getDimension(); i++) {
 			myMinBounds[i] = Double.NEGATIVE_INFINITY;
 			myMaxBounds[i] = Double.POSITIVE_INFINITY;
@@ -155,6 +155,17 @@ public class Node implements INode {
 			sb.append("HIS =     " + myHISON.getVector() + "\n");
 
 		return sb.toString();
+	}
+
+	@Override
+	public boolean isLeaf() {
+		return myHISON==null&&myLOSON==null;
+	}
+
+	@Override
+	public double distance(INode myQueryNode) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
