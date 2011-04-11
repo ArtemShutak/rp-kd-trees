@@ -56,7 +56,7 @@ public class KDTree implements IKDTree {
 		return nnSearcher.search();
 	}
 	/**
-	 * This class for "nnsearch" method. This class do nn-search.
+	 * This class for "nnsearch" method. This class do non-recursive nn-search.
 	 * @author Артем
 	 *
 	 */
@@ -91,11 +91,11 @@ public class KDTree implements IKDTree {
 					//myFathersStack.push(new NodeAndBool(curNode));
 					boolean qNodeIsLoSucces = queryNode.isLoSuccessorOf(curNode);
 					if(!closerSonForCurNodeExamined){
-						myParentsPath.push(new NodeAndBool(curNode));
+						//myParentsPath.push(new NodeAndBool(curNode));
 						curNode = curNode.getSon(qNodeIsLoSucces);
 					}else{
 						if(boundsOverlapBall()){
-							myParentsPath.push(new NodeAndBool(curNode))
+							//myParentsPath.push(new NodeAndBool(curNode))
 							curNode = curNode.getSon(!qNodeIsLoSucces);
 						}
 						
@@ -118,7 +118,7 @@ public class KDTree implements IKDTree {
 		
 	}
 	/**
-	 * This class for "nnsearch" method. This class do nn-search.
+	 * This class for "nnsearch" method. This class do recursive nn-search.
 	 * @author Артем
 	 *
 	 */
@@ -160,11 +160,11 @@ public class KDTree implements IKDTree {
 			}else{
 				boolean qNodeIsLoSucces = myQueryNode.isLoSuccessorOf(node);
 				if(qNodeIsLoSucces){
-					if(goOnLeftFrom(node)||(boundsOverlapBall()&&goOnRightFrom(node))){
+					if(recSearchToLeft(node)||(boundsOverlapBall()&&recSearchToRight(node))){
 						return true;
 					}
 				}else{
-					if(goOnRightFrom(node)||(boundsOverlapBall()&&goOnLeftFrom(node))){
+					if(recSearchToRight(node)||(boundsOverlapBall()&&recSearchToLeft(node))){
 						return true;
 					}
 				}
@@ -172,17 +172,7 @@ public class KDTree implements IKDTree {
 			}			
 		}
 
-		private boolean boundsOverlapBall() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		private boolean ballWithinBounds() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		private boolean goOnRightFrom(INode node) {
+		private boolean recSearchToRight(INode node) {
 			double temp = myMinBounds[node.getDiscriminator()];
 			myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
 			boolean res = recursiveSearch(node.getHiSon());
@@ -190,7 +180,7 @@ public class KDTree implements IKDTree {
 			return res;
 		}
 
-		private boolean goOnLeftFrom(INode node) {
+		private boolean recSearchToLeft(INode node) {
 			double temp = myMaxBounds[node.getDiscriminator()];
 			myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
 			boolean res = recursiveSearch(node.getLoSon());
@@ -204,6 +194,15 @@ public class KDTree implements IKDTree {
 		}
 		
 		
+	}
+	private boolean boundsOverlapBall() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	private boolean ballWithinBounds() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	/**
 	 * This class for "nnsearch" method. This class contain Node with distance from queryVector.

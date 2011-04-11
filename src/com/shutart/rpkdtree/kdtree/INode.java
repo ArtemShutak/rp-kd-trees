@@ -37,5 +37,7 @@ public interface INode {
 	void setLoSon(INode insertableNode);
 	void setHiSon(INode insertableNode);
 	void setSon(boolean loSon, INode insertableNode);
+	boolean isLeaf();
+	double distance(INode myQueryNode);
 
 }
