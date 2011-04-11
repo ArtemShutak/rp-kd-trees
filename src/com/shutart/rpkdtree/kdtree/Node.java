@@ -43,14 +43,14 @@ public class Node implements INode {
 		myMaxBounds = new double[getDimension()];
 		if (father == null) {
 			myDiscriminator = 0;
-			setBoundsAsInfinities();
+			setBoundsAsIfinities();
 		} else {
 			myDiscriminator = (father.getDiscriminator() + 1) % getDimension();
 			setBounds(father, itIsLoSon);
 		}
 	}
 
-	private void setBoundsAsInfinities() {
+	private void setBoundsAsIfinities() {
 		for (int i = 0; i < getDimension(); i++) {
 			myMinBounds[i] = Double.NEGATIVE_INFINITY;
 			myMaxBounds[i] = Double.POSITIVE_INFINITY;
