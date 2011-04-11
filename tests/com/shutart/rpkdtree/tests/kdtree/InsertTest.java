@@ -14,7 +14,7 @@ public class InsertTest {
 	@Test
 	public void testRoot() {
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		INode node = kdTree.insert(rootVec);
 		//System.out.println(node.toString());
 		//System.out.println(kdTree);
@@ -31,7 +31,7 @@ public class InsertTest {
 	@Test
 	public void simpleTest(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		INode root = kdTree.insert(rootVec);
 		Vector loSonVec = new VectorI(new double[] {7,18});
 		INode loSon = kdTree.insert(loSonVec);
@@ -43,7 +43,7 @@ public class InsertTest {
 	@Test
 	public void simpleTest3Nodes(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		INode root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
@@ -59,7 +59,7 @@ public class InsertTest {
 	@Test
 	public void simpleTest4NodesAndTestOfMethodIsLoSonSuccessor(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		INode root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
@@ -84,7 +84,7 @@ public class InsertTest {
 	}
 
 	private IKDTree createKDTree() {
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		INode root = kdTree.insert(rootVec);
 		
@@ -107,7 +107,7 @@ public class InsertTest {
 	
 	@Test
 	public void searchRootVec(){
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		INode root = kdTree.insert(rootVec);
 		
@@ -137,7 +137,7 @@ public class InsertTest {
 	
 	@Test
 	public void searchVec(){
-		IKDTree kdTree = new KDTree();
+		IKDTree kdTree = new KDTree(2);
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		INode root = kdTree.insert(rootVec);
 		
