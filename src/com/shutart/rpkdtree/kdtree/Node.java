@@ -164,8 +164,16 @@ public class Node implements INode {
 
 	@Override
 	public double distance(INode myQueryNode) {
-		// TODO Auto-generated method stub
-		return 0;
+		double dist = 0;
+		for (int i = 0; i < myVector.size(); i++) {
+			dist+= Math.pow(this.getKey(i), 2);
+		}
+		return Math.sqrt(dist) ;
+	}
+
+	@Override
+	public double coordinateDistance(int d, double valueInD) {
+		return Math.abs(valueInD - getKey(d));
 	}
 
 }

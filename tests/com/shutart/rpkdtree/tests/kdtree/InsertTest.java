@@ -1,5 +1,8 @@
 package com.shutart.rpkdtree.tests.kdtree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -83,26 +86,31 @@ public class InsertTest {
 		//print(root, loSon,hiSon, hihiSon);
 	}
 
-	private IKDTree createKDTree() {
+	public static IKDTree createKDTree() {
 		IKDTree kdTree = new KDTree(2);
-		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		INode root = kdTree.insert(rootVec);
-		
-		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
-		
-		Vector hiSonVec = new VectorI(new double[] {22,15});
-		INode hiSon = kdTree.insert(hiSonVec);
-		
-		Vector hihiSonVec = new VectorI(new double[] {50,15});
-		INode hihiSon = kdTree.insert(hihiSonVec);
-		
-		Vector hiloSonVec = new VectorI(new double[] {15,-5});
-		INode hiloSon = kdTree.insert(hiloSonVec);
-		
-		Vector hilohiSonVec = new VectorI(new double[] {50,-5});
-		INode hilohiSon = kdTree.insert(hilohiSonVec);
+		for (Vector vector: getListOfVectors()) {
+			kdTree.insert(vector);
+		}
 		return kdTree;
+	}
+	
+	public static List<Vector> getListOfVectors() {
+		List<Vector> res = new ArrayList<Vector>();
+		Vector rootVec =      new VectorI(new double[] {10,20 });		
+		Vector loSonVec =     new VectorI(new double[] { 7,18});		
+		Vector hiSonVec =     new VectorI(new double[] {22,15});		
+		Vector hihiSonVec =   new VectorI(new double[] {50,15});		
+		Vector hiloSonVec =   new VectorI(new double[] {15,-5});		
+		Vector hilohiSonVec = new VectorI(new double[] {50,-5});
+		
+		res.add(rootVec);
+		res.add(loSonVec);
+		res.add(hiSonVec);
+		res.add(hihiSonVec);
+		res.add(hiloSonVec);
+		res.add(hilohiSonVec);
+		
+		return res;
 	}
 	
 	@Test

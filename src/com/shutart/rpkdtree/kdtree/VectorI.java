@@ -5,12 +5,12 @@ import java.util.Arrays;
 public class VectorI implements Vector {
 	private final double[] myKeys;
 
-	public VectorI(double[] keys) {
+	public VectorI(double... keys) {
 		myKeys = keys;
 	}
 
 	@Override
-	public boolean equals(Vector vector) {
+	public boolean equals(Object vector) {
 		return Arrays.equals(myKeys, ((VectorI)vector).myKeys);
 	}
 

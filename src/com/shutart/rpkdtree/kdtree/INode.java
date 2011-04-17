@@ -39,5 +39,6 @@ public interface INode {
 	void setSon(boolean loSon, INode insertableNode);
 	boolean isLeaf();
 	double distance(INode myQueryNode);
+	double coordinateDistance(int d, double e);
 
 }

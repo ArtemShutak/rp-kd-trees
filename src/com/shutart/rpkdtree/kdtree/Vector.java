@@ -1,7 +1,8 @@
 package com.shutart.rpkdtree.kdtree;
 
 public interface Vector {
-	boolean equals(Vector vector);
+	@Override
+	boolean equals(Object vector);
 
 	int size();
 	
