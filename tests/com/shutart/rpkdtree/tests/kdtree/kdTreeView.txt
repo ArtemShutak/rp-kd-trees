@@ -1,0 +1,9 @@
+Result of InsertTest.createKDTree()
+
+discrim = 0 (x)                       (10,20)
+                                    /         \
+discrim = 1 (y)               (7,18)          (22,15)
+                                             /       \
+discrim = 0 (x)                           (15,-5)  (50,15)
+                                               \
+discrim = 1 (y)                               (50,-5)

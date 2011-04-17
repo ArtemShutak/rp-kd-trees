@@ -49,99 +49,39 @@ public class KDTree implements IKDTree {
 	 *  IN LOGARITHMIC EXPECTED TIME" (authors: Jerome H. Friedman, Jon Louis Bentley, Raphael Ari Finkel)
 	 */
 	@Override
-	public List<Vector> nnsearch(int numberOfNeighbors, Vector queryVector) {
+	public List<INode> nnsearch(final int numberOfNeighbors, final Vector queryVector) {
 		assert queryVector.size()==myDimension;
-		INode queryNode = new Node(queryVector);
+		final INode queryNode = new Node(queryVector);
 		NNSearcherRecursive nnSearcher = new NNSearcherRecursive(numberOfNeighbors,queryNode);
 		return nnSearcher.search();
 	}
-	/**
-	 * This class for "nnsearch" method. This class do non-recursive nn-search.
-	 * @author Артем
-	 *
-	 */
-	private final class NNSearcher{
-		private double[] myMinBounds = new double[myDimension];
-		private double[] myMaxBounds = new double[myDimension];
-		private PriorityQueue<NodeAndDistanse> myNodesWithDistance;
-		private Stack<NodeAndBool> myParentsPath = new Stack<NodeAndBool>();
-		
-		public NNSearcher(){
-			for (int i = 0; i < myDimension; i++) {
-				myMinBounds[i] = Double.NEGATIVE_INFINITY;
-				myMaxBounds[i] = Double.POSITIVE_INFINITY;
-			}			
-			
-		}
-
-		public List<Vector> search(int numberOfNeighbors, INode queryNode) {
-			myNodesWithDistance = new PriorityQueue<NodeAndDistanse>(numberOfNeighbors,NodeAndDistanse.comparator());
-			INode curNode = myRoot;
-			boolean closerSonForCurNodeExamined = false;
-			boolean searchFinished = false;
-			while(!searchFinished){
-				myNodesWithDistance.add(new NodeAndDistanse(curNode, curNode.distance(queryNode)));
-				if(curNode.isLeaf()){
-					if(ballWithinBounds() || myParentsPath.empty()){
-						searchFinished = true;
-					}else{
-						curNode = myParentsPath.pop().node;
-					}
-				}else{
-					//myFathersStack.push(new NodeAndBool(curNode));
-					boolean qNodeIsLoSucces = queryNode.isLoSuccessorOf(curNode);
-					if(!closerSonForCurNodeExamined){
-						//myParentsPath.push(new NodeAndBool(curNode));
-						curNode = curNode.getSon(qNodeIsLoSucces);
-					}else{
-						if(boundsOverlapBall()){
-							//myParentsPath.push(new NodeAndBool(curNode))
-							curNode = curNode.getSon(!qNodeIsLoSucces);
-						}
-						
-					}
-				}
-			}
-			return NodeAndDistanse.getListBestNodes(numberOfNeighbors,myNodesWithDistance);
-		}
-		
-		private class NodeAndBool{
-			final INode  node;
-			final boolean closerSonForThisNodeExamined;
-			
-			public NodeAndBool(INode node, boolean closerSonForThisNodeExamined) {
-				this.node = node;
-				this.closerSonForThisNodeExamined = closerSonForThisNodeExamined;
-			}			
-		}
-		
-		
-	}
+	
 	/**
 	 * This class for "nnsearch" method. This class do recursive nn-search.
 	 * @author Артем
 	 *
 	 */
 	private final class NNSearcherRecursive{
-		private double[] myMinBounds = new double[myDimension];
-		private double[] myMaxBounds = new double[myDimension];
+		private final double[] myMinBounds = new double[myDimension];
+		private final double[] myMaxBounds = new double[myDimension];
 		//PQD and PQR
-		private PriorityQueue<NodeAndDistanse> myNodesWithDistance;
 		private final INode myQueryNode;
+		private int myNumberOfNeighbors;
+		private FixedSizePriorityQueueByDistance myNodesPriorQueue;
 		
-		
-		public NNSearcherRecursive(int numberOfNeighbors, INode queryNode){
-			myNodesWithDistance = new PriorityQueue<NodeAndDistanse>(numberOfNeighbors,NodeAndDistanse.comparator());
+		public NNSearcherRecursive(final int numberOfNeighbors, final INode queryNode){
+			myNumberOfNeighbors = numberOfNeighbors;
 			myQueryNode = queryNode;
 			for (int i = 0; i < myDimension; i++) {
 				myMinBounds[i] = Double.NEGATIVE_INFINITY;
 				myMaxBounds[i] = Double.POSITIVE_INFINITY;
-			}						
+			}				
+			myNodesPriorQueue = new FixedSizePriorityQueueByDistance(myNumberOfNeighbors, queryNode);
 		}
 
-		public List<Vector> search() {
+		public List<INode> search() {
 			recursiveSearch(myRoot);
-			return getResult();
+			return myNodesPriorQueue.getNearestNeighbors();
 		}
 
 		/**
@@ -149,88 +89,80 @@ public class KDTree implements IKDTree {
 		 * @param node
 		 * @return true - if Search Finished.
 		 */
-		private boolean recursiveSearch(INode node) {
-			myNodesWithDistance.add(new NodeAndDistanse(node, node.distance(myQueryNode)));
+		private boolean recursiveSearch(final INode node) {
+			myNodesPriorQueue.add(node);
 			if(node.isLeaf()){
-				if(ballWithinBounds()){
-					return true;
-				}else{
-					return false;
-				}
+				return ballWithinBounds();
 			}else{
 				boolean qNodeIsLoSucces = myQueryNode.isLoSuccessorOf(node);
+				boolean searchComplite;
 				if(qNodeIsLoSucces){
-					if(recSearchToLeft(node)||(boundsOverlapBall()&&recSearchToRight(node))){
-						return true;
-					}
+					double temp = myMinBounds[node.getDiscriminator()];
+					myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+					searchComplite = recursiveSearch(node.getHiSon());
+					myMinBounds[node.getDiscriminator()] = temp;
 				}else{
-					if(recSearchToRight(node)||(boundsOverlapBall()&&recSearchToLeft(node))){
-						return true;
-					}
+					double temp = myMaxBounds[node.getDiscriminator()];
+					myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+					searchComplite = recursiveSearch(node.getLoSon());
+					myMaxBounds[node.getDiscriminator()] = temp;
 				}
+				if(searchComplite)
+					return true;
+				
+				if(qNodeIsLoSucces){
+					double temp = myMaxBounds[node.getDiscriminator()];
+					myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+					searchComplite = boundsOverlapBall() && recursiveSearch(node.getLoSon());
+					myMaxBounds[node.getDiscriminator()] = temp;
+				}else{
+					double temp = myMinBounds[node.getDiscriminator()];
+					myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+					searchComplite = boundsOverlapBall() && recursiveSearch(node.getHiSon());
+					myMinBounds[node.getDiscriminator()] = temp;
+				}
+				if(searchComplite)
+					return true;
+				
 				return ballWithinBounds();
 			}			
 		}
 
-		private boolean recSearchToRight(INode node) {
-			double temp = myMinBounds[node.getDiscriminator()];
-			myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-			boolean res = recursiveSearch(node.getHiSon());
-			myMinBounds[node.getDiscriminator()] = temp;
-			return res;
-		}
-
-		private boolean recSearchToLeft(INode node) {
-			double temp = myMaxBounds[node.getDiscriminator()];
-			myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-			boolean res = recursiveSearch(node.getLoSon());
-			myMaxBounds[node.getDiscriminator()] = temp;
-			return res;
-		}
-
-		private List<Vector> getResult() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		
-	}
-	private boolean boundsOverlapBall() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	private boolean ballWithinBounds() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	/**
-	 * This class for "nnsearch" method. This class contain Node with distance from queryVector.
-	 * @author Артем
-	 *
-	 */
-	private final static class NodeAndDistanse{
-		private final INode myNode;
-		private final double myDistance;
-		
-		public NodeAndDistanse(INode node, double distance){
-			myNode = node;
-			myDistance = distance;
-		}
-		public static List<Vector> getListBestNodes(int numberOfNeighbors,
-				PriorityQueue<NodeAndDistanse> nodesWithDistance) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		public static Comparator<NodeAndDistanse> comparator(){
-			return new Comparator<NodeAndDistanse>() {
-				@Override
-				public int compare(NodeAndDistanse o1, NodeAndDistanse o2) {
-					return (int) (o1.myDistance-o2.myDistance);
+		private boolean boundsOverlapBall() {
+			double sum = 0;
+			for (int d = 0; d < myDimension; d++) {
+				if(myQueryNode.getKey(d)<myMinBounds[d]){
+					sum+= myQueryNode.coordinateDistance( d, myMinBounds[d]);
+					if(dissim(sum)> getPQD1())
+						return true;
+				}else if(myQueryNode.getKey(d) > myMaxBounds[d]){
+					sum+= myQueryNode.coordinateDistance( d, myMaxBounds[d]);
+					if(dissim(sum)> getPQD1())
+						return true;
 				}
-			};
+					
+			}
+			return false;
 		}
+		
+		private double dissim(double sum) {
+			return sum;
+		}
+
+		private boolean ballWithinBounds() {
+			for (int d = 0; d < myDimension; d++) {
+				if(myQueryNode.coordinateDistance( d, myMinBounds[d]) <= getPQD1() ||
+						myQueryNode.coordinateDistance( d, myMaxBounds[d]) <= getPQD1())
+					return false;
+			}
+			return true;
+		}
+
+		private double getPQD1() {
+			return myNodesPriorQueue.getPQD1();
+		}
+		
+		
 	}
 	
 	public String toString(){

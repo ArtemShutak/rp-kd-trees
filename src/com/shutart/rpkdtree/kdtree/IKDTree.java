@@ -8,13 +8,13 @@ public interface IKDTree {
 	 * @param vector
 	 * @return 
 	 */
-	INode insert(Vector vector);
+	INode insert(final Vector vector);
 	/**
 	 * Nearest Neighbor Search (k-nn-search)
 	 * @param numberOfNeighbors - number of best matches
 	 * @param queryVector
 	 * @return 
 	 */
-	List<Vector> nnsearch(int numberOfNeighbors,Vector queryVector);
+	List<INode> nnsearch(final int numberOfNeighbors,final Vector queryVector);
 
 }
