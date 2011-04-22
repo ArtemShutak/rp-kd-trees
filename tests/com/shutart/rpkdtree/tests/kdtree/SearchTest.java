@@ -84,5 +84,40 @@ public class SearchTest {
 		System.out.println("Finished doubleSearch");
 	
 	}
+	
+	@Test
+	public void tripleSearch() {
+		System.out.println("Start tripleSearch");
+		int numberOfNeighbors = 3;
+		Vector queryVector = new VectorI(18,17);
+		IKDTree kdTree = InsertTest.createKDTree();
+		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
+				InsertTest.getListOfVectors());
+		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+				queryVector);
+	
+		compare(kdtreeRes, fullRes);
+		System.out.println("Finished tripleSearch");
+	
+	}
+	
+	@Test
+	public void someSearch() {
+		System.out.println("Start tripleSearch");
+		int numberOfNeighbors = 2;
+		Vector queryVector = new VectorI(22,5);
+		IKDTree kdTree = InsertTest.createKDTree();
+		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
+				InsertTest.getListOfVectors());
+		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+				queryVector);
+	
+		compare(kdtreeRes, fullRes);
+		System.out.println("Finished tripleSearch");
+	
+	}
+
 
 }

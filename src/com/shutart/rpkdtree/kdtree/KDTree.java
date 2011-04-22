@@ -66,6 +66,7 @@ public class KDTree implements IKDTree {
 		private final double[] myMaxBounds = new double[myDimension];
 		private final INode myQueryNode;
 		private int myNumberOfNeighbors;
+		private int testCounterOfNode = 0;
 		//PQD and PQR
 		private FixedSizePriorityQueueByDistance myNodesPriorQueue;
 		
@@ -81,6 +82,7 @@ public class KDTree implements IKDTree {
 
 		public List<INode> search() {
 			recursiveSearch(myRoot);
+			System.out.println("testCounterOfNode = " + testCounterOfNode);
 			return myNodesPriorQueue.getNearestNeighbors();
 		}
 
@@ -90,6 +92,7 @@ public class KDTree implements IKDTree {
 		 * @return true - if Search Finished.
 		 */
 		private boolean recursiveSearch(final INode node) {
+			testCounterOfNode++;
 			myNodesPriorQueue.add(node);
 			if(node.isLeaf()){
 				return ballWithinBounds();
@@ -142,11 +145,11 @@ public class KDTree implements IKDTree {
 			double sum = 0;
 			for (int d = 0; d < myDimension; d++) {
 				if (myQueryNode.getKey(d) < myMinBounds[d]) {
-					sum += myQueryNode.coordinateDistance(d, myMinBounds[d]);
+					sum += myQueryNode.f_i(d, myMinBounds[d]);
 					if (Node.dissim(sum) > getPQD1())
 						return false;
 				} else if (myQueryNode.getKey(d) > myMaxBounds[d]) {
-					sum += myQueryNode.coordinateDistance(d, myMaxBounds[d]);
+					sum += myQueryNode.f_i(d, myMaxBounds[d]);
 					if (Node.dissim(sum) > getPQD1())
 						return false;
 				}
@@ -164,8 +167,10 @@ public class KDTree implements IKDTree {
 				return false;
 			}
 			for (int d = 0; d < myDimension; d++) {
+				//if (myQueryNode.coordinateDistance(d, myMinBounds[d]) <= getPQD1()
+					//	|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
 				if (myQueryNode.coordinateDistance(d, myMinBounds[d]) <= getPQD1()
-						|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
+					|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
 					return false;
 			}
 			return true;

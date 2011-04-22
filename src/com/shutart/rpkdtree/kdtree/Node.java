@@ -166,7 +166,7 @@ public class Node implements INode {
 	public double distance(INode node) {
 		double dist = 0;
 		for (int i = 0; i < myVector.size(); i++) {
-			dist+= coordinateDistance(i, node.getKey(i));
+			dist+= f_i(i, node.getKey(i));
 			//dist+= Math.pow(this.getKey(i)-node.getKey(i), 2);
 		}
 		return Node.dissim(dist) ;
@@ -180,6 +180,11 @@ public class Node implements INode {
 	public static double dissim(double sum) {
 		return Math.sqrt(sum);
 	}
+	@Override
+	public double coordinateDistance(int numberOfCoord, double value2) {
+		return Math.abs(this.getKey(numberOfCoord)-value2);//==dissim(f_i(...))
+	}
+
 	/**
 	 * This is a f_i method from paper
 	 * @param numberOfCoord - is i
@@ -187,13 +192,13 @@ public class Node implements INode {
 	 * @param value2
 	 * @return
 	 */
-	public static double coordinateDistance(int numberOfCoord, double value1, double value2) {
+	public static double f_i(int numberOfCoord, double value1, double value2) {
 		return Math.pow(value1-value2, 2);
 	}
 
 	@Override
-	public double coordinateDistance(int numberOfCoord, double value2) {
-		return coordinateDistance(numberOfCoord, this.getKey(numberOfCoord), value2);
+	public double f_i(int numberOfCoord, double value2) {
+		return f_i(numberOfCoord, this.getKey(numberOfCoord), value2);
 	}
 
 }
