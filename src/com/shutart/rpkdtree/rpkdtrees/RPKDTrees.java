@@ -1,11 +1,13 @@
-package com.shutart.rpkdtree.rpkdtree;
+package com.shutart.rpkdtree.rpkdtrees;
 
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import com.shutart.rpkdtree.fixedqueue.FixedSizePriorityQueueByMainDist;
 import com.shutart.rpkdtree.kdtree.INode;
 import com.shutart.rpkdtree.kdtree.KDTree;
+import com.shutart.rpkdtree.kdtree.Node;
 import com.shutart.rpkdtree.kdtree.Vector;
 
 /**
@@ -49,11 +51,13 @@ public class RPKDTrees {
 	}
 
 	public List<INode> aproxNNsearch (int numberOfNeighbors, Vector queryVector){
-		
+		FixedSizePriorityQueueByMainDist queue = new FixedSizePriorityQueueByMainDist
+												(numberOfNeighbors, new Node(null, queryVector));
 		for (int i = 0; i < getNumberOfTrees(); i++) {
 			List<INode> nearestNeighbors = myProjTrees[i].nnsearch(numberOfNeighbors, queryVector);
+			queue.addAll(nearestNeighbors);
 		}
-		return null;
+		return queue.getNearestNeighbors();
 	}
 
 }

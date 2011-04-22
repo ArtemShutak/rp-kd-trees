@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+import com.shutart.rpkdtree.fixedqueue.FixedSizePriorityQueueByDistance;
+
 public class KDTree implements IKDTree {
 	private INode myRoot = null;
 	public boolean isModifiedInLastTime = false;

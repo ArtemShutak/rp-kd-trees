@@ -1,4 +1,4 @@
-package com.shutart.rpkdtree.rpkdtree;
+package com.shutart.rpkdtree.rpkdtrees;
 
 import java.util.Random;
 

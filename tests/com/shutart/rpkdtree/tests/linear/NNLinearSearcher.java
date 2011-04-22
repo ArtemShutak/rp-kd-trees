@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import com.shutart.rpkdtree.kdtree.FixedSizePriorityQueueByDistance;
+import com.shutart.rpkdtree.fixedqueue.FixedSizePriorityQueueByDistance;
 import com.shutart.rpkdtree.kdtree.INode;
 import com.shutart.rpkdtree.kdtree.Node;
 import com.shutart.rpkdtree.kdtree.Vector;

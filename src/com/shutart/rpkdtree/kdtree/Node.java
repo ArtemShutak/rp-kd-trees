@@ -155,6 +155,7 @@ public class Node implements INode {
 		StringBuilder sb = new StringBuilder();
 		sb.append("max = " + Arrays.toString(myMaxBounds) + "\n");
 		sb.append("vec = " + myVector + "\n");
+		sb.append("MVec= " + myMainVector + "\n");
 		sb.append("min = " + Arrays.toString(myMinBounds)	+ "\n");
 		sb.append("dis =   " + myDiscriminator + "\n");
 		if (myLOSON == null)
