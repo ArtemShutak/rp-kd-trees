@@ -11,6 +11,9 @@ public class VectorI implements Vector {
 
 	@Override
 	public boolean equals(Object vector) {
+		if(! (vector instanceof Vector)){
+			throw new IllegalArgumentException();
+		}
 		return Arrays.equals(myKeys, ((VectorI)vector).myKeys);
 	}
 

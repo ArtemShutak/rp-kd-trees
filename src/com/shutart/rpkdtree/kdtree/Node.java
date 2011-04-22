@@ -33,8 +33,8 @@ public class Node implements INode {
 				return false;
 			}
 		}
-		throw new IllegalArgumentException(
-				"Current vector equals parent vector!");
+		//throw new IllegalArgumentException("Current vector equals parent vector!");
+		return true;
 	}
 
 	@Override
@@ -163,17 +163,37 @@ public class Node implements INode {
 	}
 
 	@Override
-	public double distance(INode myQueryNode) {
+	public double distance(INode node) {
 		double dist = 0;
 		for (int i = 0; i < myVector.size(); i++) {
-			dist+= Math.pow(this.getKey(i), 2);
+			dist+= coordinateDistance(i, node.getKey(i));
+			//dist+= Math.pow(this.getKey(i)-node.getKey(i), 2);
 		}
-		return Math.sqrt(dist) ;
+		return Node.dissim(dist) ;
+	}
+	
+	/**
+	 * This is a F method from paper. And dissimilarity measure (in paper egn 14)
+	 * @param sum
+	 * @return
+	 */
+	public static double dissim(double sum) {
+		return Math.sqrt(sum);
+	}
+	/**
+	 * This is a f_i method from paper
+	 * @param numberOfCoord - is i
+	 * @param value1
+	 * @param value2
+	 * @return
+	 */
+	public static double coordinateDistance(int numberOfCoord, double value1, double value2) {
+		return Math.pow(value1-value2, 2);
 	}
 
 	@Override
-	public double coordinateDistance(int d, double valueInD) {
-		return Math.abs(valueInD - getKey(d));
+	public double coordinateDistance(int numberOfCoord, double value2) {
+		return coordinateDistance(numberOfCoord, this.getKey(numberOfCoord), value2);
 	}
 
 }
