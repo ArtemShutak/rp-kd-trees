@@ -1,4 +1,4 @@
-package com.shutart.rpkdtree.kdtree;
+package com.shutart.rpkdtree.fixedqueue;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -6,15 +6,16 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import com.shutart.rpkdtree.exceptions.MyException;
+import com.shutart.rpkdtree.kdtree.INode;
 
 public class FixedSizePriorityQueueByDistance {
-	private final INode myQueryNode;
+	protected final INode myQueryNode;
 	/**
 	 * Priority Queue by Distance from myQueryNode. This queue contains no more than myNumberOfNeighbors elements.
 	 * The head element is node, which have the LARGEST distance from queryNode.
 	 */
-	private final PriorityQueue<NodeAndDistance> myNodesWithDistance;
-	private final int myNumberOfNeighbors;
+	protected final PriorityQueue<NodeAndDistance> myNodesWithDistance;
+	protected final int myNumberOfNeighbors;
 
 	public FixedSizePriorityQueueByDistance(int numberOfNeighbors,INode queryNode) {
 		myQueryNode = queryNode;
@@ -23,7 +24,7 @@ public class FixedSizePriorityQueueByDistance {
 	}
 
 	public boolean add(INode node) {
-		boolean res = myNodesWithDistance.add(new NodeAndDistance(node, node.distance(myQueryNode)));
+		boolean res = myNodesWithDistance.add(new NodeAndDistance(node, myQueryNode));
 		if(myNodesWithDistance.size()>myNumberOfNeighbors){
 			myNodesWithDistance.poll();
 		}
@@ -49,34 +50,6 @@ public class FixedSizePriorityQueueByDistance {
 
 	public double getPQD1() {
 		return myNodesWithDistance.peek().getDistance();
-	}
-	
-	public static class NodeAndDistance {
-		private final INode myNode;
-		private final double myDistance;
-
-		public NodeAndDistance(INode node, double distance) {
-			myNode = node;
-			myDistance = distance;
-		}
-
-		public static Comparator<NodeAndDistance> comparator() {
-			return new Comparator<NodeAndDistance>() {
-				@Override
-				public int compare(NodeAndDistance o1, NodeAndDistance o2) {
-					return (int) (o2.myDistance - o1.myDistance);
-				}
-			};
-		}
-
-		public INode getNode() {
-			return myNode;
-		}
-
-		public double getDistance() {
-			return myDistance;
-		}
-
 	}
 
 	public int size() {
