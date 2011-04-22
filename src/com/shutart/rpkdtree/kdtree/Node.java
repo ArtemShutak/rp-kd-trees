@@ -3,15 +3,22 @@ package com.shutart.rpkdtree.kdtree;
 import java.util.Arrays;
 
 public class Node implements INode {
-	private Vector myVector;
+	private final Vector myVector;
 	private INode myLOSON = null;
 	private int myDiscriminator = -1;
 	private INode myHISON = null;
 	private double[] myMinBounds;
 	private double[] myMaxBounds;
+	private final Object myMainObject;
 
 	public Node(Vector vector) {
 		myVector = vector;
+		myMainObject = null;
+	}
+	
+	public Node(Vector vector, Object mainObject) {
+		myVector = vector;
+		myMainObject = mainObject;
 	}
 
 	@Override
@@ -137,6 +144,11 @@ public class Node implements INode {
 		} else {
 			setHiSon(node);
 		}
+	}
+	
+	@Override
+	public Object getMainObject() {
+		return myMainObject;
 	}
 
 	public String toString() {
