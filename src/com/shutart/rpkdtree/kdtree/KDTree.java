@@ -64,9 +64,9 @@ public class KDTree implements IKDTree {
 	private final class NNSearcherRecursive{
 		private final double[] myMinBounds = new double[myDimension];
 		private final double[] myMaxBounds = new double[myDimension];
-		//PQD and PQR
 		private final INode myQueryNode;
 		private int myNumberOfNeighbors;
+		//PQD and PQR
 		private FixedSizePriorityQueueByDistance myNodesPriorQueue;
 		
 		public NNSearcherRecursive(final int numberOfNeighbors, final INode queryNode){
@@ -96,63 +96,76 @@ public class KDTree implements IKDTree {
 			}else{
 				boolean qNodeIsLoSucces = myQueryNode.isLoSuccessorOf(node);
 				boolean searchComplite;
-				if(qNodeIsLoSucces){
-					double temp = myMinBounds[node.getDiscriminator()];
-					myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-					searchComplite = recursiveSearch(node.getHiSon());
-					myMinBounds[node.getDiscriminator()] = temp;
-				}else{
-					double temp = myMaxBounds[node.getDiscriminator()];
-					myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-					searchComplite = recursiveSearch(node.getLoSon());
-					myMaxBounds[node.getDiscriminator()] = temp;
+				if(node.getSon(qNodeIsLoSucces)!=null){
+					if(qNodeIsLoSucces){
+						double temp = myMaxBounds[node.getDiscriminator()];
+						myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+						searchComplite = recursiveSearch(node.getLoSon());
+						myMaxBounds[node.getDiscriminator()] = temp;
+					}else{
+						double temp = myMinBounds[node.getDiscriminator()];
+						myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+						searchComplite = recursiveSearch(node.getHiSon());
+						myMinBounds[node.getDiscriminator()] = temp;
+					}
+					if(searchComplite)
+						return true;
 				}
-				if(searchComplite)
-					return true;
 				
-				if(qNodeIsLoSucces){
-					double temp = myMaxBounds[node.getDiscriminator()];
-					myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-					searchComplite = boundsOverlapBall() && recursiveSearch(node.getLoSon());
-					myMaxBounds[node.getDiscriminator()] = temp;
-				}else{
-					double temp = myMinBounds[node.getDiscriminator()];
-					myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
-					searchComplite = boundsOverlapBall() && recursiveSearch(node.getHiSon());
-					myMinBounds[node.getDiscriminator()] = temp;
+				if (node.getSon(!qNodeIsLoSucces) != null) {
+					if (qNodeIsLoSucces) {
+						double temp = myMinBounds[node.getDiscriminator()];
+						myMinBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+						searchComplite = boundsOverlapBall()&& recursiveSearch(node.getHiSon());
+						myMinBounds[node.getDiscriminator()] = temp;
+					} else {
+						double temp = myMaxBounds[node.getDiscriminator()];
+						myMaxBounds[node.getDiscriminator()] = node.getKey(node.getDiscriminator());
+						searchComplite = boundsOverlapBall()&& recursiveSearch(node.getLoSon());
+						myMaxBounds[node.getDiscriminator()] = temp;
+					}
+					if (searchComplite)
+						return true;
 				}
-				if(searchComplite)
-					return true;
-				
 				return ballWithinBounds();
 			}			
 		}
 
+		/**
+		 * 
+		 * @return отвечает на вопрос "надо еще скать".
+		 */
 		private boolean boundsOverlapBall() {
+			if(myNodesPriorQueue.size()<myNumberOfNeighbors){
+				return true;
+			}
 			double sum = 0;
 			for (int d = 0; d < myDimension; d++) {
-				if(myQueryNode.getKey(d)<myMinBounds[d]){
-					sum+= myQueryNode.coordinateDistance( d, myMinBounds[d]);
-					if(dissim(sum)> getPQD1())
-						return true;
-				}else if(myQueryNode.getKey(d) > myMaxBounds[d]){
-					sum+= myQueryNode.coordinateDistance( d, myMaxBounds[d]);
-					if(dissim(sum)> getPQD1())
-						return true;
+				if (myQueryNode.getKey(d) < myMinBounds[d]) {
+					sum += myQueryNode.coordinateDistance(d, myMinBounds[d]);
+					if (Node.dissim(sum) > getPQD1())
+						return false;
+				} else if (myQueryNode.getKey(d) > myMaxBounds[d]) {
+					sum += myQueryNode.coordinateDistance(d, myMaxBounds[d]);
+					if (Node.dissim(sum) > getPQD1())
+						return false;
 				}
-					
+				
 			}
-			return false;
+			return true;
 		}
 		
-		private double dissim(double sum) {
-			return sum;
-		}
-
+		/**
+		 * 
+		 * @return отвечает на вопрос "уже хватит искать?"
+		 */
 		private boolean ballWithinBounds() {
+			if (myNodesPriorQueue.size() < myNumberOfNeighbors) {
+				return false;
+			}
 			for (int d = 0; d < myDimension; d++) {
-				if(myQueryNode.coordinateDistance( d, myMinBounds[d]) <= getPQD1() ||
-						myQueryNode.coordinateDistance( d, myMaxBounds[d]) <= getPQD1())
+				if (myQueryNode.coordinateDistance(d, myMinBounds[d]) <= getPQD1()
+						|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
 					return false;
 			}
 			return true;
