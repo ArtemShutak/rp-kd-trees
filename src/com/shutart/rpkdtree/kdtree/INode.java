@@ -33,13 +33,15 @@ public interface INode {
 
 	double getMinBounds(int i);
 	double getMaxBounds(int i);
+
+	Vector getMainVector();
 	//Setter methods
 	void setLoSon(INode insertableNode);
 	void setHiSon(INode insertableNode);
 	void setSon(boolean loSon, INode insertableNode);
 	boolean isLeaf();
+	
 	double distance(INode node);
-	double coordinateDistance(int d, double e);
-	double f_i(int i, double e);
-	Object getMainObject();
+	double coordinateDistance(int numberOfCoord, double value2);
+	double f_i(int numberOfCoord, double value2);
 }
