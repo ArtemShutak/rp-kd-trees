@@ -41,4 +41,5 @@ public interface INode {
 	double distance(INode node);
 	double coordinateDistance(int d, double e);
 	double f_i(int i, double e);
+	Object getMainObject();
 }
