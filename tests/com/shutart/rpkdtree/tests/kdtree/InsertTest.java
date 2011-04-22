@@ -102,6 +102,7 @@ public class InsertTest {
 		Vector hihiSonVec =   new VectorI(new double[] {50,15});		
 		Vector hiloSonVec =   new VectorI(new double[] {15,-5});		
 		Vector hilohiSonVec = new VectorI(new double[] {50,-5});
+		Vector loloSonVec = new VectorI(new double[] {5, 22});
 		
 		res.add(rootVec);
 		res.add(loSonVec);
@@ -109,6 +110,7 @@ public class InsertTest {
 		res.add(hihiSonVec);
 		res.add(hiloSonVec);
 		res.add(hilohiSonVec);
+		res.add(loloSonVec);
 		
 		return res;
 	}
