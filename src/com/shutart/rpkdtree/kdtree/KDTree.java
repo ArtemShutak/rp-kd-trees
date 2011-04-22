@@ -20,6 +20,11 @@ public class KDTree implements IKDTree {
 		assert myDimension == vector.size();
 		isModifiedInLastTime = false;
 		INode insertableNode = new Node(vector);
+		return insert(insertableNode);
+	}
+
+	@Override
+	public INode insert(INode insertableNode) {
 		if (myRoot == null) {
 			insertableNode.initBoundsAndDiscrim(null, false);
 			myRoot = insertableNode;
@@ -27,7 +32,7 @@ public class KDTree implements IKDTree {
 		}
 		INode curNode = myRoot;
 		while (true) {
-			if(curNode.getVector().equals(vector)){
+			if(curNode.getVector().equals(insertableNode.getVector())){
 				return curNode;
 			}
 			boolean itIsLoSon = insertableNode.isLoSuccessorOf(curNode);
@@ -52,6 +57,11 @@ public class KDTree implements IKDTree {
 	public List<INode> nnsearch(final int numberOfNeighbors, final Vector queryVector) {
 		assert queryVector.size()==myDimension;
 		final INode queryNode = new Node(queryVector);
+		return nnsearch(numberOfNeighbors, queryNode);
+	}
+	
+	@Override
+	public List<INode> nnsearch(final int numberOfNeighbors, final INode queryNode) {
 		NNSearcherRecursive nnSearcher = new NNSearcherRecursive(numberOfNeighbors,queryNode);
 		return nnSearcher.search();
 	}
@@ -146,11 +156,11 @@ public class KDTree implements IKDTree {
 			for (int d = 0; d < myDimension; d++) {
 				if (myQueryNode.getKey(d) < myMinBounds[d]) {
 					sum += myQueryNode.f_i(d, myMinBounds[d]);
-					if (Node.dissim(sum) > getPQD1())
+					if (VectorI.dissim(sum) > getPQD1())
 						return false;
 				} else if (myQueryNode.getKey(d) > myMaxBounds[d]) {
 					sum += myQueryNode.f_i(d, myMaxBounds[d]);
-					if (Node.dissim(sum) > getPQD1())
+					if (VectorI.dissim(sum) > getPQD1())
 						return false;
 				}
 				

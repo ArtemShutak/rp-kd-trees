@@ -1,4 +1,4 @@
-package com.shutart.rpkdtree.tests.kdtree;
+package com.shutart.rpkdtree.tests.linear;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class NNLinearSearcher {
 		myVectors = index;
 	}
 	
-	List<INode> nnsearch(int numberOfNeighbors,Vector queryVector){
+	public List<INode> nnsearch(int numberOfNeighbors,Vector queryVector){
 		myNodesPriorQueue = new FixedSizePriorityQueueByDistance(numberOfNeighbors, new Node(queryVector));
 		for (Vector vector : myVectors) {
 			myNodesPriorQueue.add(new Node(vector));

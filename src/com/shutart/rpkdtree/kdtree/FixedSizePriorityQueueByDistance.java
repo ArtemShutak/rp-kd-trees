@@ -1,12 +1,9 @@
 package com.shutart.rpkdtree.kdtree;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.SortedSet;
 
 import com.shutart.rpkdtree.exceptions.MyException;
 

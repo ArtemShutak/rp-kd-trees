@@ -7,4 +7,8 @@ public interface Vector {
 	int size();
 	
 	double getKey(int index);
+	
+	double distance(Vector vector);
+	double coordinateDistance(int numberOfCoord, double value2);
+	double f_i(int numberOfCoord, double value2);
 }

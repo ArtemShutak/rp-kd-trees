@@ -2,7 +2,10 @@ package com.shutart.rpkdtree.rpkdtree;
 
 import java.util.Random;
 
+import com.shutart.rpkdtree.kdtree.INode;
+import com.shutart.rpkdtree.kdtree.Node;
 import com.shutart.rpkdtree.kdtree.Vector;
+import com.shutart.rpkdtree.kdtree.VectorI;
 
 public class RandomMatrix {
 	private final int[][] myMatrix;
@@ -47,10 +50,23 @@ public class RandomMatrix {
 			return -1;
 		return 0;
 	}
+	
+	private int getDimension(){
+		return myMatrix[0].length;
+	}
+	private int getProjDimen(){
+		return myMatrix.length;
+	}
 
-	public Vector multiply(Vector vector) {
-		// TODO Auto-generated method stub
-		return null;
+	public INode multiply(Vector vector) {
+		double[] multiplyVec = new double[getProjDimen()];
+		for (int i = 0; i < getProjDimen(); i++) {
+			for (int j = 0; j < getDimension(); j++) {
+				multiplyVec[i]+=myMatrix[i][j]*vector.getKey(j);
+			}
+		}
+		INode resNode = new Node(new VectorI(multiplyVec) , vector);
+		return resNode;
 	}
 
 }

@@ -11,6 +11,7 @@ import com.shutart.rpkdtree.kdtree.IKDTree;
 import com.shutart.rpkdtree.kdtree.INode;
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
+import com.shutart.rpkdtree.tests.linear.NNLinearSearcher;
 
 public class SearchTest {
 	private void compare(List<INode> kdtreeRes, List<INode> fullRes) {
