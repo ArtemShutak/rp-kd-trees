@@ -23,6 +23,7 @@ public class RPKDTrees {
 	private final RandomMatrix[] myRandomMatrixes;
 
 	public RPKDTrees(int dimension, int projectidDimension,int numberOfTrees){
+		assert dimension > projectidDimension;
 		this.myDimension = dimension;
 		this.myProjectedDimension = projectidDimension;
 		myProjTrees = new KDTree[numberOfTrees];
@@ -38,11 +39,12 @@ public class RPKDTrees {
 	 * @param corpus - a set of data points
 	 * @param numberOfTrees - number of kd-trees used
 	 */
-	public void indexing(Set<Vector> corpus){
-		for (int i = 0; i < getNumberOfTrees(); i++) {
-			for (Vector vector : corpus) {
+	public void indexing(Set<Vector> corpus) {
+		for (Vector vector : corpus) {
+			assert vector.size() == myDimension;
+			for (int i = 0; i < getNumberOfTrees(); i++) {
 				myProjTrees[i].insert(myRandomMatrixes[i].multiply(vector));
-			}			
+			}
 		}
 	}
 	
@@ -51,6 +53,7 @@ public class RPKDTrees {
 	}
 
 	public List<INode> aproxNNsearch (int numberOfNeighbors, Vector queryVector){
+		assert queryVector.size() == myDimension;
 		FixedSizePriorityQueueByMainDist queue = new FixedSizePriorityQueueByMainDist
 												(numberOfNeighbors, new Node(null, queryVector));
 		for (int i = 0; i < getNumberOfTrees(); i++) {
