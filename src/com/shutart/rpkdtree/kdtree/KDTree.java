@@ -18,24 +18,24 @@ public class KDTree implements IKDTree {
 	}
 
 	@Override
-	public INode insert(Vector vector) {
+	public Vector insert(Vector vector) {
 		assert myDimension == vector.size();
 		isModifiedInLastTime = false;
 		INode insertableNode = new Node(vector);
 		return insert(insertableNode);
 	}
 
-	@Override
-	public INode insert(INode insertableNode) {
+	
+	private Vector insert(INode insertableNode) {
 		if (myRoot == null) {
 			insertableNode.initBoundsAndDiscrim(null, false);
 			myRoot = insertableNode;
-			return myRoot;
+			return myRoot.getVector();
 		}
 		INode curNode = myRoot;
 		while (true) {
 			if(curNode.getVector().equals(insertableNode.getVector())){
-				return curNode;
+				return curNode.getVector();
 			}
 			boolean itIsLoSon = insertableNode.isLoSuccessorOf(curNode);
 			INode successor = curNode.getSon(itIsLoSon);
@@ -43,7 +43,7 @@ public class KDTree implements IKDTree {
 				isModifiedInLastTime = true;
 				insertableNode.initBoundsAndDiscrim(curNode, itIsLoSon);
 				curNode.setSon(itIsLoSon, insertableNode);
-				return insertableNode;
+				return insertableNode.getVector();
 			}else{
 				curNode = successor;
 			}
@@ -56,14 +56,14 @@ public class KDTree implements IKDTree {
 	 *  IN LOGARITHMIC EXPECTED TIME" (authors: Jerome H. Friedman, Jon Louis Bentley, Raphael Ari Finkel)
 	 */
 	@Override
-	public List<INode> nnsearch(final int numberOfNeighbors, final Vector queryVector) {
+	public List<Vector> nnsearch(final int numberOfNeighbors, final Vector queryVector) {
 		assert queryVector.size()==myDimension;
 		final INode queryNode = new Node(queryVector);
 		return nnsearch(numberOfNeighbors, queryNode);
 	}
 	
-	@Override
-	public List<INode> nnsearch(final int numberOfNeighbors, final INode queryNode) {
+	
+	private List<Vector> nnsearch(final int numberOfNeighbors, final INode queryNode) {
 		NNSearcherRecursive nnSearcher = new NNSearcherRecursive(numberOfNeighbors,queryNode);
 		return nnSearcher.search();
 	}
@@ -92,7 +92,7 @@ public class KDTree implements IKDTree {
 			myNodesPriorQueue = new FixedSizePriorityQueueByDistance(myNumberOfNeighbors, queryNode);
 		}
 
-		public List<INode> search() {
+		public List<Vector> search() {
 			recursiveSearch(myRoot);
 			System.out.println("testCounterOfNode = " + testCounterOfNode);
 			return myNodesPriorQueue.getNearestNeighbors();

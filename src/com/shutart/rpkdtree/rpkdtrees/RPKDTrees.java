@@ -1,10 +1,12 @@
 package com.shutart.rpkdtree.rpkdtrees;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import com.shutart.rpkdtree.fixedqueue.FixedSizePriorityQueueByMainDist;
+import com.shutart.rpkdtree.fixedqueue.FixedSizeVecPriorQueue;
 import com.shutart.rpkdtree.kdtree.INode;
 import com.shutart.rpkdtree.kdtree.KDTree;
 import com.shutart.rpkdtree.kdtree.Node;
@@ -21,12 +23,14 @@ public class RPKDTrees {
 	private final int myProjectedDimension;
 	private final KDTree[] myProjTrees;
 	private final RandomMatrix[] myRandomMatrixes;
+	private final Map<Vector, Vector> projVec2SourceVec = new HashMap<Vector, Vector>();
 
 	public RPKDTrees(int dimension, int projectidDimension,int numberOfTrees){
 		assert dimension > projectidDimension;
 		this.myDimension = dimension;
 		this.myProjectedDimension = projectidDimension;
 		myProjTrees = new KDTree[numberOfTrees];
+		
 		myRandomMatrixes = new RandomMatrix[numberOfTrees];
 		for (int i = 0; i < numberOfTrees; i++) {
 			myProjTrees[i] = new KDTree(myProjectedDimension);
@@ -43,7 +47,9 @@ public class RPKDTrees {
 		for (Vector vector : corpus) {
 			assert vector.size() == myDimension;
 			for (int i = 0; i < getNumberOfTrees(); i++) {
-				myProjTrees[i].insert(myRandomMatrixes[i].multiply(vector));
+				Vector projVec = myRandomMatrixes[i].multiply(vector);
+				projVec2SourceVec.put(projVec, vector);
+				myProjTrees[i].insert(projVec );
 			}
 		}
 	}
@@ -52,15 +58,32 @@ public class RPKDTrees {
 		return myProjTrees.length;
 	}
 
-	public List<INode> aproxNNsearch (int numberOfNeighbors, Vector queryVector){
+	public List<Vector> aproxNNsearch (int numberOfNeighbors, Vector queryVector){
 		assert queryVector.size() == myDimension;
-		FixedSizePriorityQueueByMainDist queue = new FixedSizePriorityQueueByMainDist
-												(numberOfNeighbors, new Node(null, queryVector));
+		FixedSizeVecPriorQueue vecQueue = new MyFixedSizeVecPriorQueue(numberOfNeighbors, queryVector);
 		for (int i = 0; i < getNumberOfTrees(); i++) {
-			List<INode> nearestNeighbors = myProjTrees[i].nnsearch(numberOfNeighbors, queryVector);
-			queue.addAll(nearestNeighbors);
+			List<Vector> nearestNeighbors = 
+				myProjTrees[i].nnsearch(numberOfNeighbors, myRandomMatrixes[i].multiply(queryVector));
+			for (Vector vector : nearestNeighbors) {
+				vecQueue.add(projVec2SourceVec.get(vector));
+			}
 		}
-		return queue.getNearestNeighbors();
+		return vecQueue.getNearestNeighbors();
+	}
+	
+	private class MyFixedSizeVecPriorQueue extends FixedSizeVecPriorQueue{
+
+		public MyFixedSizeVecPriorQueue(int numberOfNeighbors, Vector queryVector) {
+			super(numberOfNeighbors, queryVector);
+		}
+		
+		@Override
+		public void add(Vector vector){
+			if(!this.contains(vector)){
+				super.add(vector);
+			}
+		}
+		
 	}
 
 }

@@ -8,7 +8,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.shutart.rpkdtree.kdtree.IKDTree;
-import com.shutart.rpkdtree.kdtree.INode;
+import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.KDTree;
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
@@ -18,7 +18,7 @@ public class InsertTest {
 	public void testRoot() {
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		IKDTree kdTree = new KDTree(2);
-		INode node = kdTree.insert(rootVec);
+		Vector vector = kdTree.insert(rootVec);
 		//System.out.println(node.toString());
 		//System.out.println(kdTree);
 		String testString = 
@@ -29,16 +29,21 @@ public class InsertTest {
 				+ "minBounds = [-Infinity, -Infinity]\n"
 				+ "maxBounds = [Infinity, Infinity]\n";
 		//Assert.assertEquals(node.toString(), testString);
+		Assert.assertTrue(vector.equals(rootVec));
 	}
 	
 	@Test
 	public void simpleTest(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		IKDTree kdTree = new KDTree(2);
-		INode root = kdTree.insert(rootVec);
-		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
+		Vector root = kdTree.insert(rootVec);
+		Assert.assertTrue(root.equals(rootVec));
 		
+		Vector loSonVec = new VectorI(new double[] { 7, 18 });
+		Vector loSon = kdTree.insert(loSonVec);
+		Assert.assertTrue(loSon.equals(loSonVec));
+
+
 		//System.out.println(kdTree);
 		//print(root,loSon);
 	}
@@ -47,13 +52,14 @@ public class InsertTest {
 	public void simpleTest3Nodes(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		IKDTree kdTree = new KDTree(2);
-		INode root = kdTree.insert(rootVec);
+		Vector root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
+		Vector loSon = kdTree.insert(loSonVec);
 		
 		Vector hiSonVec = new VectorI(new double[] {22,15});
-		INode hiSon = kdTree.insert(hiSonVec);
+		Vector hiSon = kdTree.insert(hiSonVec);
+		Assert.assertTrue(hiSon.equals(hiSonVec));
 		
 		//System.out.println(kdTree);
 		//print(root,loSon,hiSon);
@@ -63,16 +69,18 @@ public class InsertTest {
 	public void simpleTest4NodesAndTestOfMethodIsLoSonSuccessor(){
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
 		IKDTree kdTree = new KDTree(2);
-		INode root = kdTree.insert(rootVec);
+		Vector root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
+		Vector loSon = kdTree.insert(loSonVec);
 		
 		Vector hiSonVec = new VectorI(new double[] {22,15});
-		INode hiSon = kdTree.insert(hiSonVec);
+		Vector hiSon = kdTree.insert(hiSonVec);
 		
 		Vector hihiSonVec = new VectorI(new double[] {50,15});
-		INode hihiSon = kdTree.insert(hihiSonVec);
+		Vector hihiSon = kdTree.insert(hihiSonVec);
+		
+		Assert.assertTrue(hihiSon.equals(hihiSonVec));
 		
 		//System.out.println(kdTree);
 		//print(root, loSon,hiSon, hihiSon);
@@ -119,27 +127,29 @@ public class InsertTest {
 	public void searchRootVec(){
 		IKDTree kdTree = new KDTree(2);
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		INode root = kdTree.insert(rootVec);
+		Vector root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
+		Vector loSon = kdTree.insert(loSonVec);
 		
 		Vector hiSonVec = new VectorI(new double[] {22,15});
-		INode hiSon = kdTree.insert(hiSonVec);
+		Vector hiSon = kdTree.insert(hiSonVec);
 		
 		Vector hihiSonVec = new VectorI(new double[] {50,15});
-		INode hihiSon = kdTree.insert(hihiSonVec);
+		Vector hihiSon = kdTree.insert(hihiSonVec);
 		
 		Vector hiloSonVec = new VectorI(new double[] {15,-5});
-		INode hiloSon = kdTree.insert(hiloSonVec);
+		Vector hiloSon = kdTree.insert(hiloSonVec);
 		
 		Vector hilohiSonVec = new VectorI(new double[] {50,-5});
-		INode hilohiSon = kdTree.insert(hilohiSonVec);
+		Vector hilohiSon = kdTree.insert(hilohiSonVec);
 		
-		INode findRoot = kdTree.insert(rootVec);
+		Vector findRoot = kdTree.insert(rootVec);
 		
 		Assert.assertEquals(((KDTree)kdTree).isModifiedInLastTime, false);
 		Assert.assertEquals(root.toString(), findRoot.toString());
+		Assert.assertTrue(root.equals(findRoot));
+
 		
 		System.out.println(kdTree);
 		//print(root, loSon,hiSon, hihiSon);
@@ -149,35 +159,36 @@ public class InsertTest {
 	public void searchVec(){
 		IKDTree kdTree = new KDTree(2);
 		Vector rootVec = new VectorI(new double[] { 10, 20 });
-		INode root = kdTree.insert(rootVec);
+		Vector root = kdTree.insert(rootVec);
 		
 		Vector loSonVec = new VectorI(new double[] {7,18});
-		INode loSon = kdTree.insert(loSonVec);
+		Vector loSon = kdTree.insert(loSonVec);
 		
 		Vector hiSonVec = new VectorI(new double[] {22,15});
-		INode hiSon = kdTree.insert(hiSonVec);
+		Vector hiSon = kdTree.insert(hiSonVec);
 		
 		Vector hihiSonVec = new VectorI(new double[] {50,15});
-		INode hihiSon = kdTree.insert(hihiSonVec);
+		Vector hihiSon = kdTree.insert(hihiSonVec);
 		
 		Vector hiloSonVec = new VectorI(new double[] {15,-5});
-		INode hiloSon = kdTree.insert(hiloSonVec);
+		Vector hiloSon = kdTree.insert(hiloSonVec);
 		
 		Vector hilohiSonVec = new VectorI(new double[] {50,-5});
-		INode hilohiSon = kdTree.insert(hilohiSonVec);
+		Vector hilohiSon = kdTree.insert(hilohiSonVec);
 		
-		INode findHilohiSon = kdTree.insert(hilohiSonVec);
+		Vector findHilohiSon = kdTree.insert(hilohiSonVec);
 		
 		Assert.assertEquals(((KDTree)kdTree).isModifiedInLastTime, false);
 		Assert.assertEquals(hilohiSon.toString(), findHilohiSon.toString());
+		Assert.assertEquals(hilohiSon, findHilohiSon);
 		
 		System.out.println(kdTree);
 		//print(root, loSon,hiSon, hihiSon);
 	}
 
 
-	private void print(INode... nodes) {
-		for (INode node : nodes) {
+	private void print(Vector... nodes) {
+		for (Vector node : nodes) {
 			System.out.println(node);
 		}
 		

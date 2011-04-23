@@ -19,6 +19,7 @@ public class RandomMatrix {
 		while(myMatrixIsZero(d,d1)){
 			
 		}
+		System.out.println(this);
 		
 	}
 
@@ -58,15 +59,26 @@ public class RandomMatrix {
 		return myMatrix.length;
 	}
 
-	public INode multiply(Vector vector) {
+	public Vector multiply(Vector vector) {
 		double[] multiplyVec = new double[getProjDimen()];
 		for (int i = 0; i < getProjDimen(); i++) {
 			for (int j = 0; j < getDimension(); j++) {
 				multiplyVec[i]+=myMatrix[i][j]*vector.getKey(j);
 			}
 		}
-		INode resNode = new Node(new VectorI(multiplyVec) , vector);
-		return resNode;
+		//INode resNode = new Node(new VectorI(multiplyVec) , vector);
+		return new VectorI(multiplyVec);
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < getProjDimen(); i++) {
+			for (int j = 0; j < getDimension(); j++) {
+				sb.append(myMatrix[i][j]+" ");
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 }

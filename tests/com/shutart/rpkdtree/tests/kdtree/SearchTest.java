@@ -8,21 +8,19 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.shutart.rpkdtree.kdtree.IKDTree;
-import com.shutart.rpkdtree.kdtree.INode;
+import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
 import com.shutart.rpkdtree.tests.linear.NNLinearSearcher;
 
 public class SearchTest {
-	private void compare(List<INode> kdtreeRes, List<INode> fullRes) {
+	private void compare(List<Vector> kdtreeRes, List<Vector> fullRes) {
 		// TODO Auto-generated method stub
-		Iterator<INode> iter = kdtreeRes.iterator();
+		Iterator<Vector> iter = kdtreeRes.iterator();
 		if(kdtreeRes.size()==fullRes.size()){
-			for (INode node1 : fullRes) {
-				INode node2 = iter.next();
-				if(!node1.getVector().equals(node2.getVector())){
-					Assert.fail();
-				}
+			for (Vector node1 : fullRes) {
+				Vector node2 = iter.next();
+				Assert.assertEquals(node1, node2);
 			}
 			return;
 		}
@@ -36,10 +34,10 @@ public class SearchTest {
 		int numberOfNeighbors = 10;
 		Vector queryVector = new VectorI(22, 15);
 		IKDTree kdTree = InsertTest.createKDTree();
-		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		List<Vector> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
 		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
 				InsertTest.getListOfVectors());
-		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+		List<Vector> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
 				queryVector);
 
 		// dist:34.40930106817051  Node:[50.0, -5.0]
@@ -58,10 +56,10 @@ public class SearchTest {
 		int numberOfNeighbors = 1;
 		Vector queryVector = new VectorI(18,0);
 		IKDTree kdTree = InsertTest.createKDTree();
-		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		List<Vector> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
 		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
 				InsertTest.getListOfVectors());
-		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+		List<Vector> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
 				queryVector);
 
 		compare(kdtreeRes, fullRes);
@@ -75,10 +73,10 @@ public class SearchTest {
 		int numberOfNeighbors = 2;
 		Vector queryVector = new VectorI(8,-5);
 		IKDTree kdTree = InsertTest.createKDTree();
-		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		List<Vector> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
 		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
 				InsertTest.getListOfVectors());
-		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+		List<Vector> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
 				queryVector);
 	
 		compare(kdtreeRes, fullRes);
@@ -92,10 +90,10 @@ public class SearchTest {
 		int numberOfNeighbors = 3;
 		Vector queryVector = new VectorI(18,17);
 		IKDTree kdTree = InsertTest.createKDTree();
-		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		List<Vector> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
 		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
 				InsertTest.getListOfVectors());
-		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+		List<Vector> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
 				queryVector);
 	
 		compare(kdtreeRes, fullRes);
@@ -109,10 +107,10 @@ public class SearchTest {
 		int numberOfNeighbors = 2;
 		Vector queryVector = new VectorI(22,5);
 		IKDTree kdTree = InsertTest.createKDTree();
-		List<INode> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
+		List<Vector> kdtreeRes = kdTree.nnsearch(numberOfNeighbors, queryVector);
 		NNLinearSearcher nnSearcherFull = new NNLinearSearcher(
 				InsertTest.getListOfVectors());
-		List<INode> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
+		List<Vector> fullRes = nnSearcherFull.nnsearch(numberOfNeighbors,
 				queryVector);
 	
 		compare(kdtreeRes, fullRes);
