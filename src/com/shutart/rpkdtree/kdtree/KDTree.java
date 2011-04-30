@@ -179,8 +179,6 @@ public class KDTree implements IKDTree {
 				return false;
 			}
 			for (int d = 0; d < myDimension; d++) {
-				//if (myQueryNode.coordinateDistance(d, myMinBounds[d]) <= getPQD1()
-					//	|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
 				if (myQueryNode.coordinateDistance(d, myMinBounds[d]) <= getPQD1()
 					|| myQueryNode.coordinateDistance(d, myMaxBounds[d]) <= getPQD1())
 					return false;

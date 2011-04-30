@@ -1,6 +1,7 @@
 package com.shutart.rpkdtree.tests.rpkdtrees;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,23 @@ public class RPKDTreesTest {
 		
 		List<Vector> exactRes = new NNLinearSearcher(corpus).nnsearch(numberOfNeighbors, queryVector);
 		print(exactRes);
+		
+		compare(approxRes, exactRes);
 
+	}
+
+	private static void compare(List<Vector> approxRes, List<Vector> exactRes) {
+		if(approxRes.size()==exactRes.size()){
+			Iterator<Vector> approxIter = approxRes.iterator();
+			for (Vector vector : exactRes) {
+				Vector approxVect = approxIter.next();
+				if(!vector.equals(approxVect )){
+					assert false: approxVect + " != " + vector;
+				}
+			}
+		}
+		assert false: "approxRes.size() != exactRes.size()";
+		
 	}
 
 	private static void print(List<Vector> list) {
