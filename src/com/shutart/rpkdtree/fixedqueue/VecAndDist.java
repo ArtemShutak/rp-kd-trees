@@ -34,7 +34,15 @@ public class VecAndDist {
 		return new Comparator<VecAndDist>() {
 			@Override
 			public int compare(VecAndDist o1, VecAndDist o2) {
-				return (int) (o2.myDistance - o1.myDistance);
+				double differ = o2.myDistance - o1.myDistance;
+				if(differ == 0.0){
+					return 0;
+				}
+				if(differ < 0.0){
+					return -1;
+				}else{
+					return 1;
+				}
 			}
 		};
 	}
