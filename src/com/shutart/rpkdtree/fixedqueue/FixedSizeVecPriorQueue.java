@@ -1,6 +1,7 @@
 package com.shutart.rpkdtree.fixedqueue;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -54,6 +55,12 @@ public class FixedSizeVecPriorQueue {
 
 	public int size() {
 		return myVectorsWithDistance.size();
+	}
+
+	public void addAll(Collection<Vector> foundVectors) {
+		for (Vector vector : foundVectors) {
+			this.add(vector);
+		}		
 	}
 
 }

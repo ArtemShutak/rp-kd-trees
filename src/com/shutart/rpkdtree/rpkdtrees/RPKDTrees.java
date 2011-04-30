@@ -1,5 +1,6 @@
 package com.shutart.rpkdtree.rpkdtrees;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,17 +26,19 @@ public class RPKDTrees {
 	private final int myProjectedDimension;
 	private final KDTree[] myProjTrees;
 	private final RandomMatrix[] myRandomMatrixes;
-	private final Map<VectorAndSpaceNum, Vector> projVec2SourceVec = new HashMap<VectorAndSpaceNum, Vector>();
+	private final Map<Vector, List<Vector>>[] projVec2SourceVec;
 
-	public RPKDTrees(int dimension, int projectidDimension,int numberOfTrees){
-		assert dimension > projectidDimension;
+	public RPKDTrees(int dimension, int projectedDimension,int numberOfTrees){
+		assert dimension > projectedDimension;
 		this.myDimension = dimension;
-		this.myProjectedDimension = projectidDimension;
-		myProjTrees = new KDTree[numberOfTrees];
+		this.myProjectedDimension = projectedDimension;
+		myRandomMatrixes = RandomMatrix.getMatrixes(dimension,projectedDimension,numberOfTrees);
 		
-		myRandomMatrixes = RandomMatrix.getMatrixes(dimension,projectidDimension,numberOfTrees);
+		myProjTrees = new KDTree[numberOfTrees];
+		projVec2SourceVec = new Map[numberOfTrees];		
 		for (int i = 0; i < numberOfTrees; i++) {
 			myProjTrees[i] = new KDTree(myProjectedDimension);
+			projVec2SourceVec[i] = new HashMap<Vector, List<Vector>>();
 			//myRandomMatrixes[i] = new RandomMatrix(myDimension, myProjectedDimension);
 		}
 	}
@@ -50,7 +53,13 @@ public class RPKDTrees {
 			assert vector.size() == myDimension;
 			for (int spaceNum = 0; spaceNum < getNumberOfTrees(); spaceNum++) {
 				Vector projVec = myRandomMatrixes[spaceNum].multiply(vector);
-				projVec2SourceVec.put(new VectorAndSpaceNum(projVec, spaceNum), vector);
+				List<Vector> sorceVecs = projVec2SourceVec[spaceNum].get(projVec);
+				if(sorceVecs==null){
+					sorceVecs = new ArrayList<Vector>(1);
+					projVec2SourceVec[spaceNum].put(projVec, sorceVecs);
+				}
+				sorceVecs.add(vector);
+				//assert sorceVecs.size()==1 : "Matrix is bad";
 				myProjTrees[spaceNum].insert(projVec );
 			}
 		}
@@ -67,8 +76,8 @@ public class RPKDTrees {
 			List<Vector> nearestNeighbors = 
 				myProjTrees[spaceNum].nnsearch(numberOfNeighbors, myRandomMatrixes[spaceNum].multiply(queryVector));
 			for (Vector vector : nearestNeighbors) {
-				Vector newVector = projVec2SourceVec.get(new VectorAndSpaceNum(vector, spaceNum));
-				vecQueue.add(newVector);
+				List<Vector> foundVectors = projVec2SourceVec[spaceNum].get(vector);
+				vecQueue.addAll(foundVectors);
 			}
 		}
 		return vecQueue.getNearestNeighbors();
@@ -85,35 +94,6 @@ public class RPKDTrees {
 			if(!this.contains(vector)){
 				super.add(vector);
 			}
-		}
-		
-	}
-	
-	private class VectorAndSpaceNum{
-
-		private final int spaceNum;
-		private final Vector vec;
-
-		public VectorAndSpaceNum(Vector projVec, int spaceNum){
-			this.vec = projVec;
-			this.spaceNum = spaceNum;
-		}
-
-		public int getSpaceNum() {
-			return spaceNum;
-		}
-
-		public Vector getVector() {
-			return vec;
-		}
-		
-		@Override
-		public boolean equals(Object vectorAndNum) {
-			if(! (vectorAndNum instanceof VectorAndSpaceNum)){
-				throw new IllegalArgumentException();
-			}
-			return spaceNum==((VectorAndSpaceNum)vectorAndNum).spaceNum &&
-					vec.equals(((VectorAndSpaceNum)vectorAndNum).vec);
 		}
 		
 	}
