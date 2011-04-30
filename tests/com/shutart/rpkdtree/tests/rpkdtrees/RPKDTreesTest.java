@@ -43,6 +43,7 @@ public class RPKDTreesTest {
 					assert false: approxVect + " != " + vector;
 				}
 			}
+			return;
 		}
 		assert false: "approxRes.size() != exactRes.size()";
 		
