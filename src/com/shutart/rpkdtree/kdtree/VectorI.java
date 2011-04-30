@@ -71,5 +71,12 @@ public class VectorI implements Vector {
 	public double f_i(int numberOfCoord, double value2) {
 		return f_i(numberOfCoord, this.getKey(numberOfCoord), value2);
 	}
+	public int hashCode(){
+		int hash = 0;
+		for (int i = 0; i < myKeys.length; i++) {
+			hash+=((Double)myKeys[i]).hashCode();
+		}
+		return hash;
+	}
 
 }
