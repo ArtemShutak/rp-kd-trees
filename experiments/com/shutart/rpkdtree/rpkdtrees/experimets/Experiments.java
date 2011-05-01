@@ -1,22 +1,36 @@
 package com.shutart.rpkdtree.rpkdtrees.experimets;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
 import com.shutart.rpkdtree.rpkdtrees.RPKDTrees;
+import com.shutart.rpkdtree.rpkdtrees.RandomMatrix;
 import com.shutart.rpkdtree.tests.linear.NNLinearSearcher;
 
 public class Experiments {
 
-	private static int dimension;
-	private static int[] projectidDimensions = new int[] {5,10,15};
+	private static final String DATA_PATH = "datas\\";
+	private static final String EXPERIMENTS_PATH = DATA_PATH + "experiments\\";
+	private static int dimension = 41;
+	private static int[] projectidDimensions = new int[] {2,3,4,5};
+	/**
+	 * parameter number of trees from 1 to <tt>maxNumberOfTrees</tt>
+	 */
 	private static int maxNumberOfTrees =  20;
-	private static int numberOfNeighbors;
-	private static VectorI queryVector;
+	private static int numberOfNeighbors = 3;
+	private static VectorI queryVector = getQueryVector();
 	
 	//results
 	//speed of search
@@ -32,6 +46,7 @@ public class Experiments {
 	 */
 	public static void main(String[] args){
 		Set<Vector> corpus = getCorpus();
+		print(corpus);
 		
 		Timer timer = new Timer();
 		for (int iProjDim = 0; iProjDim < projectidDimensions.length; iProjDim++) {
@@ -86,27 +101,60 @@ public class Experiments {
 		
 	}
 
-	private static void print(List<Vector> list) {
+	private static void print(Collection<Vector> list) {
+		int number = 1;
 		for (Vector vector : list) {
-			System.out.print(vector + "   ");
+			System.out.println(number + ") " + vector);
+			number++;
 		}
-		System.out.println("\n_______________________________");
+		System.out.println("_______________________________");
+	}
+
+	private static VectorI getQueryVector() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private static Set<Vector> getCorpus() {
-		return createCorpus();
-	}
-
-	private static Set<Vector> createCorpus() {
-		Set<Vector> corpus = new LinkedHashSet<Vector>();
-		corpus.add(new VectorI(10,15,87,14));
-		corpus.add(new VectorI(2,14,37,82));
-		corpus.add(new VectorI(18,13,34,632));
-		corpus.add(new VectorI(8,13,4,632));
-		corpus.add(new VectorI(218,13,34,33));
-		corpus.add(new VectorI(38,34,44,62));
+		Set<Vector> corpus = new HashSet<Vector>();
+		try {
+			File corpusFile = new File(EXPERIMENTS_PATH + "ColorHist.csv");
+			Scanner sc = new Scanner(corpusFile);
+			int curNumberOfVec = 1;
+			
+			int nextNumbOfVec = -1;
+			int numberOfAttribute = -1;
+			double value = -1;
+			for(StringTokenizer sTokenizer = new StringTokenizer(sc.nextLine(), ", :;");sTokenizer.hasMoreTokens();){
+				nextNumbOfVec = new Integer(sTokenizer.nextToken());
+				numberOfAttribute = new Integer(sTokenizer.nextToken());
+				value = new Double(sTokenizer.nextToken());
+			}
+			while(sc.hasNextLine()){
+				double[] keys = new double[dimension];
+				while(true){
+					keys[numberOfAttribute-1] = value;
+					if(sc.hasNextLine()){
+						for(StringTokenizer sTokenizer = new StringTokenizer(sc.nextLine(), ", :;");sTokenizer.hasMoreTokens();){
+							nextNumbOfVec = new Integer(sTokenizer.nextToken());
+							numberOfAttribute = new Integer(sTokenizer.nextToken());
+							value = new Double(sTokenizer.nextToken());
+						}
+						if(nextNumbOfVec!=curNumberOfVec){
+							break;
+						}
+					}else{
+						break;
+					}
+				}
+				Vector newVector = new VectorI(keys);
+				corpus.add(newVector);	
+				curNumberOfVec++;
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		return corpus;
 	}
-
 
 }
