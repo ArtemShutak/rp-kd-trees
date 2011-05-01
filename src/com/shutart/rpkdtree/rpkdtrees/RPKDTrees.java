@@ -27,6 +27,7 @@ public class RPKDTrees {
 	private final KDTree[] myProjTrees;
 	private final RandomMatrix[] myRandomMatrixes;
 	private final Map<Vector, List<Vector>>[] projVec2SourceVec;
+	private int myComplexityOfLastSearch;
 
 	public RPKDTrees(int dimension, int projectedDimension,int numberOfTrees){
 		assert dimension > projectedDimension;
@@ -70,11 +71,13 @@ public class RPKDTrees {
 	}
 
 	public List<Vector> aproxNNsearch (int numberOfNeighbors, Vector queryVector){
+		myComplexityOfLastSearch = 0;
 		assert queryVector.size() == myDimension;
 		FixedSizeVecPriorQueue vecQueue = new MyFixedSizeVecPriorQueue(numberOfNeighbors, queryVector);
 		for (int spaceNum = 0; spaceNum < getNumberOfTrees(); spaceNum++) {
 			List<Vector> nearestNeighbors = 
 				myProjTrees[spaceNum].nnsearch(numberOfNeighbors, myRandomMatrixes[spaceNum].multiply(queryVector));
+			myComplexityOfLastSearch+=myProjTrees[spaceNum].getComplexityOfLastSearch();
 			for (Vector vector : nearestNeighbors) {
 				List<Vector> foundVectors = projVec2SourceVec[spaceNum].get(vector);
 				vecQueue.addAll(foundVectors);
@@ -96,6 +99,10 @@ public class RPKDTrees {
 			}
 		}
 		
+	}
+
+	public int getComplexityOfLastSearch() {
+		return myComplexityOfLastSearch;
 	}
 
 }

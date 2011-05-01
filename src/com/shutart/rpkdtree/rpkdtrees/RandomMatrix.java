@@ -95,11 +95,11 @@ public class RandomMatrix {
 
 	public static RandomMatrix[] getMatrixes(int dimension,
 			int projectidDimension, int numberOfTrees) {
-		String matrixesFileName = "matrixes" + "_d="+dimension+
+		String matrixesFileName = "matrix" + "_d="+dimension+
 											   "_d1=" + projectidDimension+
 											   "_m=" + numberOfTrees+
 											   ".txt";
-		File thisMatrFile = new File("matrixes\\" + matrixesFileName );
+		File thisMatrFile = new File("datas\\matrix\\" + matrixesFileName );
 		if(!thisMatrFile.exists()){
 			return createMatrixesFile(thisMatrFile, dimension, projectidDimension,numberOfTrees);
 		}
