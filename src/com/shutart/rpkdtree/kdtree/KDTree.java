@@ -12,6 +12,7 @@ public class KDTree implements IKDTree {
 	private INode myRoot = null;
 	public boolean isModifiedInLastTime = false;
 	private int myDimension;
+	private int myComplexityOfLastSearch;
 
 	public KDTree(int dimension) {
 		this.myDimension = dimension;
@@ -78,9 +79,11 @@ public class KDTree implements IKDTree {
 		private final double[] myMaxBounds = new double[myDimension];
 		private final INode myQueryNode;
 		private int myNumberOfNeighbors;
-		private int testCounterOfNode = 0;
 		//PQD and PQR
 		private FixedSizePriorityQueueByDistance myNodesPriorQueue;
+		
+		//complexity of search
+		private int counterOfNode = 0;
 		
 		public NNSearcherRecursive(final int numberOfNeighbors, final INode queryNode){
 			myNumberOfNeighbors = numberOfNeighbors;
@@ -94,7 +97,8 @@ public class KDTree implements IKDTree {
 
 		public List<Vector> search() {
 			recursiveSearch(myRoot);
-			System.out.println("testCounterOfNode = " + testCounterOfNode);
+			myComplexityOfLastSearch+=counterOfNode;
+			System.out.println("testCounterOfNode = " + counterOfNode);
 			return myNodesPriorQueue.getNearestNeighbors();
 		}
 
@@ -104,7 +108,7 @@ public class KDTree implements IKDTree {
 		 * @return true - if Search Finished.
 		 */
 		private boolean recursiveSearch(final INode node) {
-			testCounterOfNode++;
+			counterOfNode++;
 			myNodesPriorQueue.add(node);
 			if(node.isLeaf()){
 				return ballWithinBounds();
@@ -212,6 +216,10 @@ public class KDTree implements IKDTree {
 			return sb.toString();
 		}
 		return null;
+	}
+
+	public int getComplexityOfLastSearch() {
+		return myComplexityOfLastSearch;
 	}
 
 }

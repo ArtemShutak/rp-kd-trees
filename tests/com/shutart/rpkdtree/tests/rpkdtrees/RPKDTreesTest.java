@@ -31,6 +31,8 @@ public class RPKDTreesTest {
 		print(exactRes);
 		
 		compare(approxRes, exactRes);
+		
+		System.out.println("RPKD-Trees test FINISHED");
 
 	}
 
