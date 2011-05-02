@@ -19,8 +19,8 @@ public class Timer {
 		myStopTime = System.currentTimeMillis();
 	}
 
-	public long getTimeInSec() {
-		return (myStopTime-myStartTime)/1000;
+	public long getTime() {
+		return (myStopTime-myStartTime);
 	}
 	
 	
