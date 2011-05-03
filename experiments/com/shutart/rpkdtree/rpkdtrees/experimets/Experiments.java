@@ -29,24 +29,30 @@ import com.shutart.rpkdtree.tests.linear.NNLinearSearcher;
 public class Experiments {
 	private static final String DATA_PATH = "datas\\";
 	private static final String EXPERIMENTS_PATH = DATA_PATH + "experiments\\";
-	private static final int dimension = 41;
+	public static final int dimension = 41;
 	/**
 	 * parameter number of trees from 1 to <tt>maxNumberOfTrees</tt>
 	 */
 	private static final int maxNumberOfTrees =  20;
-	private static final int numberOfNeighbors = 5;
-	private static final int[] projectedDimensions = new int[] {2,3,4,5};
+	private static final int numberOfNeighbors = 10;//------------------------------------------------------------------
+	private static final int divisorForQVector = 500;//-------------
+	private static final int[] projectedDimensions = new int[] {1,3,5};
 	private static String attributesForResFile;
 	static{
-		attributesForResFile = "_d="+dimension+"_d1=";
+		attributesForResFile = "d="+dimension+"_d1=";
 		for (int i = 0; i < projectedDimensions.length; i++) {
 			attributesForResFile+=projectedDimensions[i];
 		}
-		attributesForResFile+="m=1-"+maxNumberOfTrees;
+		attributesForResFile+="_m=1-"+maxNumberOfTrees + "_nNeig="+numberOfNeighbors + "_qVec"+divisorForQVector;
+		System.out.println("attributesForResFile= " + attributesForResFile);
 	}
-	private static final String COMPLEXITY_OF_SEARCH_FILE_NAME = EXPERIMENTS_PATH + "complexityOfSearch" + attributesForResFile + ".csv";
-	private static final String TIME_SPEED_OF_SEARCH_FILE_NAME = EXPERIMENTS_PATH + "timeSpeedOfSearch"+attributesForResFile + ".csv";
-	private static final String PRECISION_FILE_NAME = EXPERIMENTS_PATH + "precision"+attributesForResFile+".csv";
+	private static final String CUR_EXPERIMENTS_PATH = EXPERIMENTS_PATH + attributesForResFile + "\\";
+	private static final String COMPLEXITY_OF_SEARCH_FILE_NAME = 
+		CUR_EXPERIMENTS_PATH + "complexityOfSearch_" + attributesForResFile + ".csv";
+	private static final String TIME_SPEED_OF_SEARCH_FILE_NAME = 
+		CUR_EXPERIMENTS_PATH + "timeSpeedOfSearch_"+attributesForResFile + ".csv";
+	private static final String PRECISION_FILE_NAME =
+		CUR_EXPERIMENTS_PATH + "precision_"+attributesForResFile+".csv";
 
 	private static Vector queryVector = getQueryVector();
 	
@@ -90,6 +96,8 @@ public class Experiments {
 				
 				precision[numOfTrees-1] = Precision.averagePrecision(exactRes, approxRes);
 				
+				System.out.println("Precision = " + Precision.precision(exactRes, approxRes));
+				System.out.println("ArgPrecision=" + precision[numOfTrees-1]);
 			}			
 			writeAllResultsInFiles();
 		}
@@ -164,8 +172,8 @@ public class Experiments {
 			Scanner sc = new Scanner(queryVectorFile);
 			double[] keys = new double[dimension];
 			int counter = 0;
-			while (sc.hasNextDouble()) {
-				keys[dimension] = sc.nextDouble();
+			while (sc.hasNextLine()) {
+				keys[counter] = new Double(sc.nextLine());
 				counter++;
 			}
 			return new VectorI(keys);
@@ -183,11 +191,11 @@ public class Experiments {
 			double[] keys = new double[dimension];
 			Random random = new Random();
 			for (int i = 0; i < keys.length; i++) {
-				keys[i] = random.nextDouble();
-				if(keys[i]>0.4){
-					keys[i]/=10;
-				}
-				output.write(keys[i]+" ");
+				keys[i] = random.nextDouble()/divisorForQVector;
+				//if(keys[i]>0.4){
+					//keys[i]/=10;
+				//}
+				output.write(keys[i]+"\n");
 			}
 			output.close();
 			return new VectorI(keys);
