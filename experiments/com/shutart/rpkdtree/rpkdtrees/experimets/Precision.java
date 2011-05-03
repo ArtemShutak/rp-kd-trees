@@ -19,6 +19,11 @@ public class Precision {
 	private static double precisionRelevant(int i,List<Vector> expertList, List<Vector> examList) {
 		return precision(position(expertList.get(i),examList)+1,expertList,examList);
 	}
+	
+	public static double precision(List<Vector> expertList, List<Vector> examList){
+		assert examList.size() == expertList.size();
+		return precision(examList.size(), expertList, examList);
+	}
 
 	/**
 	 * 

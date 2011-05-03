@@ -7,6 +7,7 @@ import java.util.PriorityQueue;
 
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
+import com.shutart.rpkdtree.rpkdtrees.experimets.Experiments;
 
 public class FixedSizeVecPriorQueue {
 	/**
@@ -41,12 +42,16 @@ public class FixedSizeVecPriorQueue {
 			print(myVectorsWithDistance.peek());
 			resArray[indexOfRes]=myVectorsWithDistance.poll().getVector();
 		}
-		System.out.println("      ");
+		if(myQueryVector.size()==Experiments.dimension){
+			System.out.println("      ");
+		}
 		return Arrays.asList(resArray);
 	}
 	
 	private void print(VecAndDist peek) {
-		System.out.println("dist:" + peek.getDistance() + " Node:" + peek.getVector() );		
+		if(myQueryVector.size()==Experiments.dimension){
+		System.out.println("dist:" + peek.getDistance() + " Node:" + peek.getVector() );
+		}
 	}
 	
 	public double getPQD1() {
