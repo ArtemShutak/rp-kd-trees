@@ -20,6 +20,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.shutart.rpkdtree.kdtree.IKDTree;
+import com.shutart.rpkdtree.kdtree.KDTree;
 import com.shutart.rpkdtree.kdtree.Vector;
 import com.shutart.rpkdtree.kdtree.VectorI;
 import com.shutart.rpkdtree.rpkdtrees.RPKDTrees;
@@ -33,17 +35,18 @@ public class Experiments {
 	/**
 	 * parameter number of trees from 1 to <tt>maxNumberOfTrees</tt>
 	 */
-	private static final int maxNumberOfTrees =  20;
-	private static final int numberOfNeighbors = 10;//------------------------------------------------------------------
-	private static final int divisorForQVector = 500;//-------------
-	private static final int[] projectedDimensions = new int[] {1,3,5};
+	private static final int MAX_NUMBER_OF_TREES =  20;
+	private static final int NUMBER_OF_NEIGHBORS = 10;//------------------------------------------------------------------
+	//private static final int divisorForQVector = 500;//-------------
+	private static final int NUMBER_OF_qVECTOR = 2;//---------------------------
+	private static final int[] PROJECTED_DIMENSION = new int[] {1,3,5};
 	private static String attributesForResFile;
 	static{
 		attributesForResFile = "d="+dimension+"_d1=";
-		for (int i = 0; i < projectedDimensions.length; i++) {
-			attributesForResFile+=projectedDimensions[i];
+		for (int i = 0; i < PROJECTED_DIMENSION.length; i++) {
+			attributesForResFile+=PROJECTED_DIMENSION[i];
 		}
-		attributesForResFile+="_m=1-"+maxNumberOfTrees + "_nNeig="+numberOfNeighbors + "_qVec"+divisorForQVector;
+		attributesForResFile+="_m=1-"+MAX_NUMBER_OF_TREES + "_nNeig="+NUMBER_OF_NEIGHBORS + "_NqVec"+NUMBER_OF_qVECTOR;
 		System.out.println("attributesForResFile= " + attributesForResFile);
 	}
 	private static final String CUR_EXPERIMENTS_PATH = EXPERIMENTS_PATH + attributesForResFile + "\\";
@@ -54,18 +57,23 @@ public class Experiments {
 	private static final String PRECISION_FILE_NAME =
 		CUR_EXPERIMENTS_PATH + "precision_"+attributesForResFile+".csv";
 
-	private static Vector queryVector = getQueryVector();
+	//private static Vector queryVector = getQueryVector();
 	
 	//results
 	//speed of search
-	private static Integer[] complexity = new Integer [maxNumberOfTrees];
-	private static Long[] timeComplexityInSec = new Long [maxNumberOfTrees];
+	private static Integer[] complexity = new Integer [MAX_NUMBER_OF_TREES];
+	private static Long[] timeComplexityInSec = new Long [MAX_NUMBER_OF_TREES];
 	
 	private static int complexityForLinearSearch;
 	private static long timeComplexityInSecForLinearSearch;
+	
+	private static int complexityForKDTree;
+	private static long timeComplexityInSecForKDTree;
 	//average precision
-	private static Double[] precision = new Double [maxNumberOfTrees];
+	private static Double[] precision = new Double [MAX_NUMBER_OF_TREES];
 	private static double precisionForLinearSearch;
+	private static double precisionForKDTree;
+
 	
 
 	/**
@@ -74,22 +82,19 @@ public class Experiments {
 	public static void main(String[] args){
 		clearResultsFiles();
 		Set<Vector> corpus = getCorpus();
+		Vector queryVector = getQueryVector(NUMBER_OF_qVECTOR,corpus);
 		//print(corpus);
 		
 		Timer timer = new Timer();
-		timer.run();
-		List<Vector> exactRes = new NNLinearSearcher(corpus).nnsearch(numberOfNeighbors, queryVector);
-		timer.stop();
-		complexityForLinearSearch = corpus.size();
-		timeComplexityInSecForLinearSearch = timer.getTime();
-		precisionForLinearSearch = Precision.averagePrecision(exactRes, exactRes);
-		writeResultsOfLinearSearchInFile();
-		for (int iProjDim = 0; iProjDim < projectedDimensions.length; iProjDim++) {
-			for (int numOfTrees = 1; numOfTrees <= maxNumberOfTrees; numOfTrees++) {
-				RPKDTrees tree = new RPKDTrees(dimension, projectedDimensions[iProjDim], numOfTrees);
+		List<Vector> exactRes = linearSearchExper(corpus, queryVector, timer);
+		List<Vector> resOfKDTree = kdtreeSearchExper(corpus, queryVector, timer, exactRes);
+		compare(resOfKDTree, exactRes);
+		for (int iProjDim = 0; iProjDim < PROJECTED_DIMENSION.length; iProjDim++) {
+			for (int numOfTrees = 1; numOfTrees <= MAX_NUMBER_OF_TREES; numOfTrees++) {
+				RPKDTrees tree = new RPKDTrees(dimension, PROJECTED_DIMENSION[iProjDim], numOfTrees);
 				tree.indexing(corpus);
 				timer.run();
-				List<Vector> approxRes = tree.aproxNNsearch(numberOfNeighbors, queryVector);
+				List<Vector> approxRes = tree.aproxNNsearch(NUMBER_OF_NEIGHBORS, queryVector);
 				timer.stop();
 				complexity[numOfTrees-1] = tree.getComplexityOfLastSearch();
 				timeComplexityInSec[numOfTrees-1] = timer.getTime();	
@@ -103,15 +108,53 @@ public class Experiments {
 		}
 	}
 
+	private static List<Vector> kdtreeSearchExper(Set<Vector> corpus,
+			Vector queryVector, Timer timer, List<Vector> exactRes) {
+		KDTree kdtree = new KDTree(dimension);
+		for (Vector vector : corpus) {
+			kdtree.insert(vector);
+		}
+		timer.run();
+		List<Vector> resOfKDTree = kdtree.nnsearch(NUMBER_OF_NEIGHBORS, queryVector);
+		timer.stop();
+		complexityForKDTree= kdtree.getComplexityOfLastSearch();
+		timeComplexityInSecForKDTree= timer.getTime();
+		precisionForKDTree= Precision.averagePrecision(exactRes, resOfKDTree);
+		writeResultsOfKDTreeInFile();
+		return resOfKDTree;
+	}
+
+	private static List<Vector> linearSearchExper(Set<Vector> corpus,
+			Vector queryVector, Timer timer) {
+		timer.run();
+		List<Vector> exactRes = new NNLinearSearcher(corpus).nnsearch(NUMBER_OF_NEIGHBORS, queryVector);
+		timer.stop();
+		complexityForLinearSearch = corpus.size();
+		timeComplexityInSecForLinearSearch = timer.getTime();
+		precisionForLinearSearch = Precision.averagePrecision(exactRes, exactRes);
+		writeResultsOfLinearSearchInFile();
+		return exactRes;
+	}
+
+	private static void writeResultsOfKDTreeInFile() {
+		writeResultsInFile(complexityForKDTree,timeComplexityInSecForKDTree,precisionForKDTree,true);		
+	}
+
 	private static void writeResultsOfLinearSearchInFile() {
+		writeResultsInFile(complexityForLinearSearch,timeComplexityInSecForLinearSearch,precisionForLinearSearch,false);
+		
+	}
+
+	private static void writeResultsInFile(int complexityOfSearch, long timeComplexity,
+			double precision, boolean append) {
 		try {
-			Writer outputSpeed = new BufferedWriter(new FileWriter(COMPLEXITY_OF_SEARCH_FILE_NAME));
-			Writer outputTime = new BufferedWriter(new FileWriter(TIME_SPEED_OF_SEARCH_FILE_NAME));
-			Writer outputPrecision = new BufferedWriter(new FileWriter(PRECISION_FILE_NAME));
-			for (int i = 0; i < maxNumberOfTrees; i++) {
-				outputSpeed.write(complexityForLinearSearch + ", ");
-				outputTime.write(timeComplexityInSecForLinearSearch + ", ");
-				outputPrecision.write(precisionForLinearSearch + ", ");
+			Writer outputSpeed = new BufferedWriter(new FileWriter(COMPLEXITY_OF_SEARCH_FILE_NAME,append));
+			Writer outputTime = new BufferedWriter(new FileWriter(TIME_SPEED_OF_SEARCH_FILE_NAME,append));
+			Writer outputPrecision = new BufferedWriter(new FileWriter(PRECISION_FILE_NAME,append));
+			for (int i = 0; i < MAX_NUMBER_OF_TREES; i++) {
+				outputSpeed.write(complexityOfSearch + ", ");
+				outputTime.write(timeComplexity + ", ");
+				outputPrecision.write(precision + ", ");
 			}
 			outputSpeed.write("\n");
 			outputTime.write("\n ");
@@ -122,7 +165,6 @@ public class Experiments {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	private static void writeAllResultsInFiles() {
@@ -134,7 +176,7 @@ public class Experiments {
 	private static void writeResultsInFile(String fileName, Object[] results) {
 		try {
 			Writer output = new BufferedWriter(new FileWriter(fileName,true));
-			for (int i = 0; i < maxNumberOfTrees; i++) {
+			for (int i = 0; i < MAX_NUMBER_OF_TREES; i++) {
 				output.write(results[i].toString()+", ");
 			}
 			output.write("\n");
@@ -156,6 +198,19 @@ public class Experiments {
 			number++;
 		}
 		System.out.println("_______________________________");
+	}
+
+	private static Vector getQueryVector(int vecNum, Set<Vector> corpus) {
+		int index = 0;
+		for (Iterator iterator = corpus.iterator(); iterator.hasNext();) {
+			Vector vector = (Vector) iterator.next();
+			if(index==vecNum){
+				iterator.remove();
+				return vector;
+			}
+			index++;
+		}
+		return null;
 	}
 
 	private static Vector getQueryVector() {
@@ -191,7 +246,7 @@ public class Experiments {
 			double[] keys = new double[dimension];
 			Random random = new Random();
 			for (int i = 0; i < keys.length; i++) {
-				keys[i] = random.nextDouble()/divisorForQVector;
+				keys[i] = random.nextDouble();//divisorForQVector;
 				//if(keys[i]>0.4){
 					//keys[i]/=10;
 				//}
@@ -206,7 +261,7 @@ public class Experiments {
 	}
 
 	private static Set<Vector> getCorpus() {
-		Set<Vector> corpus = new HashSet<Vector>();
+		Set<Vector> corpus = new LinkedHashSet<Vector>();
 		try {
 			File corpusFile = new File(EXPERIMENTS_PATH + "ColorHist.csv");
 			Scanner sc = new Scanner(corpusFile);
@@ -259,6 +314,20 @@ public class Experiments {
 			}
 		}
 		return true;
+	}
+	private static void compare(List<Vector> res1, List<Vector> res2) {
+		if(res1.size()==res2.size()){
+			Iterator<Vector> approxIter = res1.iterator();
+			for (Vector vector : res2) {
+				Vector approxVect = approxIter.next();
+				if(!vector.equals(approxVect )){
+					assert false: approxVect + " != " + vector;
+				}
+			}
+			return;
+		}
+		assert false: "approxRes.size() != exactRes.size()";
+		
 	}
 
 }
